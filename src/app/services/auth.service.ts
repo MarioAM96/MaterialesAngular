@@ -15,7 +15,10 @@ export class AuthService {
       .then((response) => response.json())
       .then((data) => {
         if (data.status== true) {
+          console.log("data", data);
+          console.log("user", data.username);
           sessionStorage.setItem(this.tokenKey, data.rol);
+          sessionStorage.setItem('userName', data.usernaame);
           return true;
         }
         return false;

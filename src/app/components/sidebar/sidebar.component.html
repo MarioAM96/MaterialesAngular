@@ -1,6 +1,15 @@
-<aside class="sidebar">
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    <div class="user-info">
+      <i class="user-icon">👤</i> <!-- Aquí va el icono de usuario -->
+      <span>{{ userName }} - {{ userRol }}</span> <!-- Mostrar el nombre del usuario -->
+    </div>
+    <button (click)="toggleSidebar()">☰</button> <!-- Botón para colapsar/expandir -->
+  </div>
+  
   <ul class="list-unstyled">
     <li><a routerLink="/dashboard" class="sidebar-link">Dashboard</a></li>
     <li><a routerLink="/settings" class="sidebar-link">Settings</a></li>
+    <!-- Otros enlaces del sidebar -->
   </ul>
 </aside>

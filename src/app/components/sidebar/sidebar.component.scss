@@ -1,41 +1,71 @@
 .sidebar {
-    width: 250px;
-    height: 100vh;
-    background-color: #222;
-    color: white;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding-top: 20px;
+  width: 250px;
+  height: 100vh;
+  background-color: #222;
+  color: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding-top: 20px;
+  transition: width 0.3s ease; /* Para animación de colapso */
+  
+  &.collapsed {
+    width: 80px; /* Ancho cuando está colapsada */
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: #333;
     
-    ul {
-      padding-left: 0;
-      list-style: none;
+    .user-info {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
       
-      li {
-        margin-bottom: 20px;
+      .user-icon {
+        margin-right: 8px;
+      }
+    }
+
+    button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  }
+
+  ul {
+    padding-left: 0;
+    list-style: none;
+    
+    li {
+      margin-bottom: 20px;
+      
+      a {
+        display: block;
+        padding: 12px 20px;
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        border-radius: 4px;
+        transition: background-color 0.3s ease, color 0.3s ease;
         
-        a {
-          display: block;
-          padding: 12px 20px;
-          color: white;
-          text-decoration: none;
-          font-size: 16px;
-          font-weight: 500;
-          border-radius: 4px;
-          transition: background-color 0.3s ease, color 0.3s ease;
-          
-          &:hover {
-            background-color: #333;
-            color: #fff;
-          }
-          
-          &.active {
-            background-color: #007BFF;
-          }
+        &:hover {
+          background-color: #333;
+          color: #fff;
+        }
+        
+        &.active {
+          background-color: #007BFF;
         }
       }
     }
   }
-  
+}
