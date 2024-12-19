@@ -1,1 +1,22 @@
-<p>dashboard works!</p>
+<div class="table-container">
+    <h2>Dashboard</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of data">
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.email }}</td>
+          <td>{{ item.role }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
