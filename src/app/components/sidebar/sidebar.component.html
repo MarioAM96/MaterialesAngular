@@ -1,7 +1,6 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
   <div class="sidebar-header">
     <div class="user-info">
-      <i class="user-icon">👤</i>
       <button (click)="toggleSidebar()">☰</button>
       <span class="user-text">{{ userName }} - {{ userRol }}</span>
     </div>
@@ -24,6 +23,12 @@
       <a routerLink="/proyectos" class="sidebar-link">
         <i class="icon">🔖</i>
         <span class="link-text">Proyectos</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/usuarios" class="sidebar-link">
+        <i class="icon">👥</i>
+        <span class="link-text">Usuarios</span>
       </a>
     </li>
     <!-- Otros enlaces del sidebar -->
