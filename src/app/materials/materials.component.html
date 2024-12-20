@@ -1,0 +1,50 @@
+<div class="table-container">
+  <h2>Materiales</h2>
+  <br>
+
+  <button mat-raised-button color="primary" (click)="addUser()" class="add-user-btn">
+    <mat-icon>add</mat-icon> <!-- Ícono de "más" -->
+  </button>
+
+  <!-- Overlay de carga -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <!-- Contenedor para buscador y selector -->
+  <div class="search-and-select">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ejm. John">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="column-selector">
+      <mat-label>Seleccionar Columnas</mat-label>
+      <mat-select>
+        <mat-option>
+          <mat-checkbox (change)="toggleAllColumns(true)">Mostrar todos</mat-checkbox>
+        </mat-option>
+        <mat-option>
+          <mat-checkbox (change)="toggleAllColumns(false)">Ocultar todos</mat-checkbox>
+        </mat-option>
+        <mat-option *ngFor="let column of filteredColumns()">
+          <mat-checkbox [(ngModel)]="column.visible">{{ column.name }}</mat-checkbox>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 custom-table">
+    <ng-container *ngFor="let column of allColumns">
+      <ng-container [matColumnDef]="column.property" *ngIf="column.visible">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column.name }}</th>
+        <td mat-cell *matCellDef="let element">{{ element[column.property] }}</td>
+      </ng-container>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20, 50, 100, 200]" showFirstLastButtons></mat-paginator>
+</div>

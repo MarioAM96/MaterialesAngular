@@ -1,0 +1,105 @@
+.table-container {
+    position: relative; /* Para asegurar que los elementos posicionados absolutamente estén dentro de este contenedor */
+  }
+  
+  .add-user-btn {
+    width: 50px; /* Tamaño del botón */
+    height: 50px; /* Tamaño del botón */
+    border-radius: 50%; /* Hacerlo circular */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0; /* Elimina el padding para que se ajuste el ícono */
+    position: absolute; /* Posición absoluta para mover el botón */
+    right: 20px; /* Alinearlo a la derecha */
+    top: 5px; /* Mueve el botón más arriba (ajustar según necesites) */
+    background-color: black; /* Fondo negro */
+    color: white; /* Color del ícono */
+    border: none; /* Eliminar borde */
+    font-size: 24px; /* Tamaño del ícono */
+    z-index: 10; /* Asegura que el botón esté encima de otros elementos */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+  }
+  
+  
+  .add-user-btn mat-icon {
+    color: white; /* Color del ícono */
+  }
+  
+  .add-user-btn:hover {
+    background-color: #333; /* Fondo negro más oscuro en hover */
+  }
+  
+  .search-and-select {
+    display: flex;
+    justify-content: space-between; /* Espacio entre los elementos, uno a la izquierda y el otro a la derecha */
+    align-items: center;
+    margin-bottom: 1rem; /* Ajusta el espacio entre la búsqueda y la tabla */
+  }
+  
+  .search-field {
+    width: 350px; /* Tamaño fijo para el buscador */
+    margin-right: 10px; /* Espacio entre el buscador y el selector */
+  }
+  
+  .column-selector {
+    width: 190px; /* Tamaño fijo para el selector */
+    margin-left: 10px; /* Espacio entre los campos */
+  }
+  
+  .search-field {
+    flex-shrink: 0; /* Evita que el campo de búsqueda se encoja */
+  }
+  
+  .column-selector {
+    flex-shrink: 0; /* Evita que el selector de columnas se encoja */
+  }
+  @media (max-width: 600px) {
+    .table-container {
+      padding: 10px; /* Reduce el padding para pantallas pequeñas */
+    }
+  
+    .add-user-btn {
+      width: 40px;
+      height: 40px;
+      right: 10px;
+      top: 10px;
+      font-size: 20px;
+    }
+  
+    .search-and-select {
+      flex-direction: column; /* Cambia a columna para pantallas pequeñas */
+      align-items: stretch; /* Asegura que los elementos ocupen todo el ancho */
+    }
+  
+    .search-field,
+    .column-selector {
+      width: 100%; /* Ocupa todo el ancho disponible */
+      margin: 5px 0; /* Espacio entre los elementos */
+    }
+  
+    table {
+      display: block; /* Permite el desplazamiento horizontal */
+      overflow-x: auto;
+    }
+  
+    th, td {
+      white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+    }
+  }
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
+    z-index: 10; /* Asegúrate de que esté por encima de la tabla */
+  }
+  
+  .table-container {
+    position: relative; /* Necesario para el overlay */
+  }

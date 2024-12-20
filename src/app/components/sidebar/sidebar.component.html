@@ -1,7 +1,42 @@
-<aside>
-    <ul>
-      <li><a routerLink="/dashboard">Dashboard</a></li>
-      <li><a routerLink="/settings">Settings</a></li>
-    </ul>
-  </aside>
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    <div class="user-info">
+      <button (click)="toggleSidebar()">☰</button>
+      <span class="user-text">{{ userName }} - {{ userRol }}</span>
+    </div>
+  </div>
   
+  <ul class="list-unstyled">
+    <li>
+      <a routerLink="/dashboard" class="sidebar-link">
+        <i class="icon">🏠</i>
+        <span class="link-text">Dashboard</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/settings" class="sidebar-link">
+        <i class="icon">⚙️</i>
+        <span class="link-text">Settings</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/proyectos" class="sidebar-link">
+        <i class="icon">🔖</i>
+        <span class="link-text">Proyectos</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/usuarios" class="sidebar-link">
+        <i class="icon">👥</i>
+        <span class="link-text">Usuarios</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/materiales" class="sidebar-link">
+        <i class="icon">📦</i>
+        <span class="link-text">Materiales</span>
+      </a>
+    </li>
+    <!-- Otros enlaces del sidebar -->
+  </ul>
+</aside>
