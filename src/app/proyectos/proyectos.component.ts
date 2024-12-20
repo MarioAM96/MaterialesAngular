@@ -11,27 +11,22 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
-import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  DragDropModule,
+  CdkDragDrop,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
-
-interface Proyecto {
-  id: string;
-  materialSolicitado: string;
-  cantidad: string;
-  observacion: string;
-  fechaSolicitada: string;
-  paqueteTrabajo: string;
-  tecnicoResponsable: string;
-  statusEntrega: string;
-  bodega: string;
-  codigo: string;
-  fechaEntrega: string;
-  cantidadEntregada: string;
-}
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Proyecto } from '../models/proyectos.model';
+import { AddUsersComponent } from '../add-users/add-users.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ApiService } from '../services/api.service';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-proyectos',
-  standalone: true,
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -43,26 +38,25 @@ interface Proyecto {
     MatSelectModule,
     DragDropModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    MatDialogModule,
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './proyectos.component.html',
-  styleUrls: ['./proyectos.component.scss']
+  styleUrls: ['./proyectos.component.scss'],
+  providers: [ApiService],
 })
 export class ProyectosComponent implements OnInit {
   allColumns = [
     { name: 'ID', property: 'id', visible: true },
-    { name: 'Material Solicitado', property: 'materialSolicitado', visible: true },
-    { name: 'Cantidad', property: 'cantidad', visible: true },
-    { name: 'Observación', property: 'observacion', visible: true },
-    { name: 'Fecha Solicitada', property: 'fechaSolicitada', visible: true },
-    { name: 'Paquete de Trabajo', property: 'paqueteTrabajo', visible: true },
-    { name: 'Técnico Responsable', property: 'tecnicoResponsable', visible: true },
-    { name: 'Status Entrega', property: 'statusEntrega', visible: true },
-    { name: 'Bodega', property: 'bodega', visible: true },
-    { name: 'Código', property: 'codigo', visible: true },
-    { name: 'Fecha de Entrega', property: 'fechaEntrega', visible: true },
-    { name: 'Cantidad Entregada', property: 'cantidadEntregada', visible: true }
+    { name: 'Nombre del Archivo', property: 'filename', visible: true },
+    { name: 'Tamaño', property: 'size', visible: true },
+    { name: 'Ultima Modificación', property: 'last_modified', visible: true },
+    { name: 'Sheet ID', property: 'sheetid', visible: true },
   ];
+  isLoading: boolean = false;
+  ApiService: any;
 
   columnFilter: string = '';
   dataSource = new MatTableDataSource<Proyecto>([]);
@@ -70,10 +64,21 @@ export class ProyectosComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private dialog: MatDialog,
+    private apiService: ApiService
+  ) {}
 
   ngOnInit(): void {
-    this.getDataFromApi();
+    this.getProjectsFromApi();
+    this.dataSource.filterPredicate = (data: Proyecto, filter: string) => {
+      const dataStr = Object.values(data).join(' ').toLowerCase(); // Convertir todos los valores de la fila a texto
+      // Normalizar los datos y el filtro antes de compararlos
+      const normalizedDataStr = this.removeTildes(dataStr);
+      const normalizedFilter = this.removeTildes(filter);
+      return normalizedDataStr.includes(normalizedFilter); // Comparar sin tildes
+    };
   }
 
   ngAfterViewInit() {
@@ -81,48 +86,69 @@ export class ProyectosComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
 
+  removeTildes(str: string): string {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Elimina los caracteres diacríticos
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const normalizedFilterValue = this.removeTildes(filterValue)
+      .trim()
+      .toLowerCase();
+    this.dataSource.filter = normalizedFilterValue;
   }
 
   get displayedColumns(): string[] {
-    return this.allColumns.filter(column => column.visible).map(column => column.property);
+    return this.allColumns
+      .filter((column) => column.visible)
+      .map((column) => column.property);
   }
 
-  getDataFromApi(): void {
-    const apiUrl = 'https://api.tvmax.ec/api/get-deliveries/1UliJqH6oNuZEk6l72r7alxHe5QOyYGS6ZzS8NtyfYP4/PEDIDOS/materiales-fibramax-65bb0c225f90.json';
-
-    this.http.get<any[]>(apiUrl).subscribe(data => {
-      const mappedData = data.map(item => ({
-        id: item.id,
-        materialSolicitado: item['Material Solicitado'],
-        cantidad: item['Cantidad'],
-        observacion: item['Observación'],
-        fechaSolicitada: item['Fecha solicitada'],
-        paqueteTrabajo: item['Paquete de Trabajo'],
-        tecnicoResponsable: item['Técnico Responsable'],
-        statusEntrega: item['Status Entrega'],
-        bodega: item['Bodega'],
-        codigo: item['Código'],
-        fechaEntrega: item['Fecha de entrega'],
-        cantidadEntregada: item['Cantidad Entregada']
-      }));
-
-      this.dataSource.data = mappedData;
-    });
+  getProjectsFromApi(): void {
+    this.isLoading = true; // Inicia la carga
+    this.apiService.getProyects().subscribe(
+      (data: any[]) => {
+        const mappedData = data.map((item) => ({
+          id: item.id,
+          filename: item.filename,
+          size: item.size,
+          last_modified: item.last_modified,
+          sheetid: item.sheetid,
+        }));
+        this.dataSource.data = mappedData;
+        this.isLoading = false; // Finaliza la carga
+      },
+      (error) => {
+        console.error('Error al obtener los usuarios:', error);
+        this.isLoading = false; // Finaliza la carga en caso de error
+      }
+    );
   }
 
   toggleAllColumns(visible: boolean) {
-    this.allColumns.forEach(column => column.visible = visible);
+    this.allColumns.forEach((column) => (column.visible = visible));
   }
-  
+
   filteredColumns() {
-    return this.allColumns.filter(column => column.name.toLowerCase().includes(this.columnFilter.toLowerCase()));
+    return this.allColumns.filter((column) =>
+      column.name.toLowerCase().includes(this.columnFilter.toLowerCase())
+    );
   }
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.allColumns, event.previousIndex, event.currentIndex);
   }
-  
+
+  addUser() {
+    const dialogRef = this.dialog.open(AddUsersComponent, {
+      width: '400px',
+      panelClass: 'custom-dialog',
+    });
+
+    dialogRef.afterClosed().subscribe((result: Proyecto) => {
+      if (result) {
+        this.dataSource.data = [...this.dataSource.data, result]; // Añade el nuevo usuario a la tabla
+      }
+    });
+  }
 }
