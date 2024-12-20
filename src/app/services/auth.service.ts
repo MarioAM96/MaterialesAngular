@@ -30,6 +30,6 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!sessionStorage.getItem(this.tokenKey);
+    return typeof window !== 'undefined' && !!sessionStorage.getItem(this.tokenKey);
   }
 }

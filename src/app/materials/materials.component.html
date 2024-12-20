@@ -1,10 +1,15 @@
 <div class="table-container">
-  <h2>Usuarios</h2>
+  <h2>Materiales</h2>
   <br>
-  
+
   <button mat-raised-button color="primary" (click)="addUser()" class="add-user-btn">
     <mat-icon>add</mat-icon> <!-- Ícono de "más" -->
   </button>
+
+  <!-- Overlay de carga -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
 
   <!-- Contenedor para buscador y selector -->
   <div class="search-and-select">
@@ -41,5 +46,5 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20, 50, 100, 200]" showFirstLastButtons></mat-paginator>
 </div>

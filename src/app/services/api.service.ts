@@ -17,4 +17,8 @@ getUsers(): Observable<any> {
   return this.http.get(this.apiUrl + 'get-data/1UliJqH6oNuZEk6l72r7alxHe5QOyYGS6ZzS8NtyfYP4/EQUIPO/' + 'materiales-fibramax-65bb0c225f90.json');
 }
 
+getMaterials(): Observable<any> {
+  return this.http.get(this.apiUrl + 'get-data/1UliJqH6oNuZEk6l72r7alxHe5QOyYGS6ZzS8NtyfYP4/MATERIAL_STOCK/' + 'materiales-fibramax-65bb0c225f90.json');
+}
+
 }

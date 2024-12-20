@@ -54,3 +54,36 @@
 .column-selector {
   flex-shrink: 0; /* Evita que el selector de columnas se encoja */
 }
+@media (max-width: 600px) {
+  .table-container {
+    padding: 10px; /* Reduce el padding para pantallas pequeñas */
+  }
+
+  .add-user-btn {
+    width: 40px;
+    height: 40px;
+    right: 10px;
+    top: 10px;
+    font-size: 20px;
+  }
+
+  .search-and-select {
+    flex-direction: column; /* Cambia a columna para pantallas pequeñas */
+    align-items: stretch; /* Asegura que los elementos ocupen todo el ancho */
+  }
+
+  .search-field,
+  .column-selector {
+    width: 100%; /* Ocupa todo el ancho disponible */
+    margin: 5px 0; /* Espacio entre los elementos */
+  }
+
+  table {
+    display: block; /* Permite el desplazamiento horizontal */
+    overflow-x: auto;
+  }
+
+  th, td {
+    white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+  }
+}
