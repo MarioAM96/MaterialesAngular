@@ -8,6 +8,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../services/api.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Usuario } from '../models/usuario.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-users',
@@ -39,36 +40,43 @@ export class AddUsersComponent {
   ) {}
 
   save() {
-    console.log('Usuario antes de guardar:', this.usuario);
-    
     const payload = {
       userName: this.usuario.Nombre,
       accountType: this.usuario.Rol,
       password: this.usuario.Password,
     };
-    console.log("payload", payload);
-    
+    //console.log("payload", payload);
+
     this.apiService.addUser(payload).subscribe(
       (response: any) => {
         console.log('Usuario agregado exitosamente:', response);
         if (response.status) {
-          this.snackBar.open('Usuario creado correctamente', 'Cerrar', {
-            duration: 3000,
-            panelClass: ['snack-success'], // Estilo para éxito
+          Swal.fire({
+            title: 'Éxito!',
+            text: 'Usuario creado correctamente',
+            icon: 'success',
+            confirmButtonText: 'Cerrar',
+            confirmButtonColor: '#4CAF50',
           });
           this.dialogRef.close(this.usuario);
         } else {
-          this.snackBar.open('Error al crear el usuario', 'Cerrar', {
-            duration: 3000,
-            panelClass: ['snack-error'], // Estilo para error
+          Swal.fire({
+            title: 'Error',
+            text: 'Error al crear el usuario',
+            icon: 'error',
+            confirmButtonText: 'Cerrar',
+            confirmButtonColor: '#F44336',
           });
         }
       },
       (error: any) => {
         console.error('Error al agregar usuario:', error);
-        this.snackBar.open('Ocurrió un error al crear el usuario', 'Cerrar', {
-          duration: 3000,
-          panelClass: ['snack-error'], // Estilo para error
+        Swal.fire({
+          title: 'Error',
+          text: 'Ocurrió un error al crear el usuario',
+          icon: 'error',
+          confirmButtonText: 'Cerrar',
+          confirmButtonColor: '#F44336',
         });
       }
     );
