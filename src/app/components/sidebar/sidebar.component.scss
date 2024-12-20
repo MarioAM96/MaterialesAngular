@@ -157,3 +157,11 @@
     }
   }
 }
+.sidebar {
+  width: 250px;
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 80px; /* Ancho de la barra lateral cuando está colapsada */
+}
