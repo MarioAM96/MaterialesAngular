@@ -1,17 +1,17 @@
 .sidebar {
-    width: 250px;
     height: 100vh;
     background-color: #000; /* Fondo negro */
     color: #fff; /* Texto blanco */
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
     padding-top: 20px;
-    transition: width 0.3s ease, background-color 0.3s ease; /* Animación fluida */
-    
+    overflow: hidden; /* Ocultar contenido desbordado */
+    transition: flex-basis 0.3s ease, background-color 0.3s ease; /* Ajuste de animación */
+    display: inline-block; /* Asegurar que se ajuste al contenido */
+
     &.collapsed {
-      width: 0; /* Ancho colapsado */
-      overflow: hidden; /* Ocultar contenido */
+        flex-basis: 0; /* Espacio colapsado cuando está oculto */
     }
-  }
+}
   
   .content {
     flex-grow: 1;

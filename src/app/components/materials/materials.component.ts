@@ -24,6 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ApiService } from '../../services/api.service';
 import { Materiales } from '../../models/materiales.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AddMaterialsComponent } from '../add-materials/add-materials.component';
 
 @Component({
   selector: 'app-materials',
@@ -150,7 +151,7 @@ export class MaterialsComponent {
   }
 
   addUser() {
-    const dialogRef = this.dialog.open(AddUsersComponent, {
+    const dialogRef = this.dialog.open(AddMaterialsComponent, {
       width: '400px',
       panelClass: 'custom-dialog',
     });

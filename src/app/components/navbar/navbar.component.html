@@ -1,6 +1,17 @@
 <nav class="navbar">
   <div class="container-fluid">
-    <div class="navbar-brand">Materiales</div>
-    <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+    <div class="navbar-brand">Proyectos</div>
+    <div class="user-menu">
+      <button class="user-name" (click)="toggleMenu($event)">
+        <span class="user-initials">{{ getUserInitials() }}</span>
+        <span class="user-fullname">{{ userName }}</span>
+        <span class="arrow">&#9662;</span>
+      </button>
+      <div class="dropdown-menu" [class.show]="menuOpen">
+        <button class="btn-logout" (click)="logout()">
+          <span class="logout-icon">➤</span> Salir
+        </button>
+      </div>
+    </div>
   </div>
 </nav>

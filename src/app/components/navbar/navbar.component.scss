@@ -1,33 +1,99 @@
 nav {
-  background-color: #fff;
+  background-color: #f8f9fa;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px 20px;
+  padding: 5px 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .navbar-brand {
   font-size: 1.5rem;
+  font-weight: 700;
+  color: #212529;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-name {
+  font-size: 14px;
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #b0c4de;
+  border-radius: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.user-name:hover {
+  background-color: #e0e0e0;
+}
+
+.user-initials {
+  background-color: #d3d3d3;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
   font-weight: bold;
   color: #333;
 }
 
+.user-fullname {
+  margin-right: 10px;
+}
+
+.arrow {
+  font-size: 12px;
+  color: #333;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  display: none;
+  z-index: 1000;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
 .btn-logout {
   font-size: 16px;
-  padding: 8px 16px;
-  border-radius: 4px;
-  background-color: #000;
-  color: #fff;
+  padding: 10px 20px;
+  width: 100%;
+  text-align: left;
+  background-color: transparent;
+  color: #a33;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
 
-  &:hover {
-    background-color: #333;
-  }
+.btn-logout:hover {
+  color: #800;
+}
 
-  &:active {
-    background-color: #444;
-  }
+.logout-icon {
+  margin-right: 8px;
+  font-size: 18px;
 }
