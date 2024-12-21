@@ -17,16 +17,16 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Proyecto } from '../models/proyectos.model';
-import { AddUsersComponent } from '../add-users/add-users.component';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiService } from '../services/api.service';
+import { AddUsersComponent } from '../add-users/add-users.component';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { ApiService } from '../../services/api.service';
+import { Materiales } from '../../models/materiales.model';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
-  selector: 'app-proyectos',
+  selector: 'app-materials',
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -43,23 +43,30 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
     MatIconModule,
     MatProgressSpinnerModule
   ],
-  templateUrl: './proyectos.component.html',
-  styleUrls: ['./proyectos.component.scss'],
   providers: [ApiService],
+  templateUrl: './materials.component.html',
+  styleUrl: './materials.component.scss',
 })
-export class ProyectosComponent implements OnInit {
+export class MaterialsComponent {
   allColumns = [
     { name: 'ID', property: 'id', visible: true },
-    { name: 'Nombre del Archivo', property: 'filename', visible: true },
-    { name: 'Tamaño', property: 'size', visible: true },
-    { name: 'Ultima Modificación', property: 'last_modified', visible: true },
-    { name: 'Sheet ID', property: 'sheetid', visible: true },
+    { name: 'Material', property: 'material', visible: true },
+    { name: 'Código', property: 'codigo', visible: true },
+    { name: 'Descripción', property: 'descripcion', visible: true },
+    { name: 'Stock Inicial', property: 'stockInicial', visible: true },
+    { name: 'Stock Real', property: 'stockReal', visible: true },
+    { name: 'Bodega', property: 'bodega', visible: true },
+    {
+      name: 'Nombre del Proyecto',
+      property: 'nombreDelProyecto',
+      visible: true,
+    },
   ];
   isLoading: boolean = false;
   ApiService: any;
 
   columnFilter: string = '';
-  dataSource = new MatTableDataSource<Proyecto>([]);
+  dataSource = new MatTableDataSource<Materiales>([]);
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -71,8 +78,8 @@ export class ProyectosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getProjectsFromApi();
-    this.dataSource.filterPredicate = (data: Proyecto, filter: string) => {
+    this.getMaterialsFromApi();
+    this.dataSource.filterPredicate = (data: Materiales, filter: string) => {
       const dataStr = Object.values(data).join(' ').toLowerCase(); // Convertir todos los valores de la fila a texto
       // Normalizar los datos y el filtro antes de compararlos
       const normalizedDataStr = this.removeTildes(dataStr);
@@ -86,10 +93,6 @@ export class ProyectosComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  removeTildes(str: string): string {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Elimina los caracteres diacríticos
-  }
-
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     const normalizedFilterValue = this.removeTildes(filterValue)
@@ -98,22 +101,29 @@ export class ProyectosComponent implements OnInit {
     this.dataSource.filter = normalizedFilterValue;
   }
 
+  removeTildes(str: string): string {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Elimina los caracteres diacríticos
+  }
+
   get displayedColumns(): string[] {
     return this.allColumns
       .filter((column) => column.visible)
       .map((column) => column.property);
   }
 
-  getProjectsFromApi(): void {
+  getMaterialsFromApi(): void {
     this.isLoading = true; // Inicia la carga
-    this.apiService.getProyects().subscribe(
+    this.apiService.getMaterials().subscribe(
       (data: any[]) => {
         const mappedData = data.map((item) => ({
           id: item.id,
-          filename: item.filename,
-          size: item.size,
-          last_modified: item.last_modified,
-          sheetid: item.sheetid,
+          material: item['Material'],
+          codigo: item['Código'],
+          descripcion: item['Descripción'],
+          stockInicial: item['Stock Inicial'],
+          stockReal: item['Stock Real'],
+          bodega: item['Bodega'],
+          nombreDelProyecto: item['Nombre del proyecto'],
         }));
         this.dataSource.data = mappedData;
         this.isLoading = false; // Finaliza la carga
@@ -145,7 +155,7 @@ export class ProyectosComponent implements OnInit {
       panelClass: 'custom-dialog',
     });
 
-    dialogRef.afterClosed().subscribe((result: Proyecto) => {
+    dialogRef.afterClosed().subscribe((result: Materiales) => {
       if (result) {
         this.dataSource.data = [...this.dataSource.data, result]; // Añade el nuevo usuario a la tabla
       }

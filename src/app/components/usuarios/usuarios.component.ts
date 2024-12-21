@@ -21,12 +21,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddUsersComponent } from '../add-users/add-users.component';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { ApiService } from '../services/api.service';
-import { Materiales } from '../models/materiales.model';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ApiService } from '../../services/api.service';
+import { Usuario } from '../../models/usuario.model';
 
 @Component({
-  selector: 'app-materials',
+  selector: 'app-usuarios',
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -41,32 +40,22 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     FormsModule,
     MatDialogModule,
     MatIconModule,
-    MatProgressSpinnerModule
   ],
   providers: [ApiService],
-  templateUrl: './materials.component.html',
-  styleUrl: './materials.component.scss',
+  templateUrl: './usuarios.component.html',
+  styleUrl: './usuarios.component.scss',
 })
-export class MaterialsComponent {
+export class UsuariosComponent {
   allColumns = [
     { name: 'ID', property: 'id', visible: true },
-    { name: 'Material', property: 'material', visible: true },
-    { name: 'Código', property: 'codigo', visible: true },
-    { name: 'Descripción', property: 'descripcion', visible: true },
-    { name: 'Stock Inicial', property: 'stockInicial', visible: true },
-    { name: 'Stock Real', property: 'stockReal', visible: true },
-    { name: 'Bodega', property: 'bodega', visible: true },
-    {
-      name: 'Nombre del Proyecto',
-      property: 'nombreDelProyecto',
-      visible: true,
-    },
+    { name: 'Nombre', property: 'Nombre', visible: true },
+    { name: 'Rol', property: 'Rol', visible: true },
+    { name: 'Password', property: 'Password', visible: true },
   ];
-  isLoading: boolean = false;
   ApiService: any;
 
   columnFilter: string = '';
-  dataSource = new MatTableDataSource<Materiales>([]);
+  dataSource = new MatTableDataSource<Usuario>([]);
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -78,8 +67,8 @@ export class MaterialsComponent {
   ) {}
 
   ngOnInit(): void {
-    this.getMaterialsFromApi();
-    this.dataSource.filterPredicate = (data: Materiales, filter: string) => {
+    this.getUsersFromApi();
+    this.dataSource.filterPredicate = (data: Usuario, filter: string) => {
       const dataStr = Object.values(data).join(' ').toLowerCase(); // Convertir todos los valores de la fila a texto
       // Normalizar los datos y el filtro antes de compararlos
       const normalizedDataStr = this.removeTildes(dataStr);
@@ -95,42 +84,33 @@ export class MaterialsComponent {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    const normalizedFilterValue = this.removeTildes(filterValue)
-      .trim()
-      .toLowerCase();
+    const normalizedFilterValue = this.removeTildes(filterValue).trim().toLowerCase();
     this.dataSource.filter = normalizedFilterValue;
   }
-
+  
   removeTildes(str: string): string {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Elimina los caracteres diacríticos
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');  // Elimina los caracteres diacríticos
   }
-
+  
   get displayedColumns(): string[] {
     return this.allColumns
       .filter((column) => column.visible)
       .map((column) => column.property);
   }
 
-  getMaterialsFromApi(): void {
-    this.isLoading = true; // Inicia la carga
-    this.apiService.getMaterials().subscribe(
+  getUsersFromApi(): void {
+    this.apiService.getUsers().subscribe(
       (data: any[]) => {
         const mappedData = data.map((item) => ({
           id: item.id,
-          material: item['Material'],
-          codigo: item['Código'],
-          descripcion: item['Descripción'],
-          stockInicial: item['Stock Inicial'],
-          stockReal: item['Stock Real'],
-          bodega: item['Bodega'],
-          nombreDelProyecto: item['Nombre del proyecto'],
+          Nombre: item['Nombre'],
+          Rol: item['Rol'],
+          Password: item['Password'],
         }));
         this.dataSource.data = mappedData;
-        this.isLoading = false; // Finaliza la carga
       },
       (error) => {
         console.error('Error al obtener los usuarios:', error);
-        this.isLoading = false; // Finaliza la carga en caso de error
       }
     );
   }
@@ -155,7 +135,7 @@ export class MaterialsComponent {
       panelClass: 'custom-dialog',
     });
 
-    dialogRef.afterClosed().subscribe((result: Materiales) => {
+    dialogRef.afterClosed().subscribe((result: Usuario) => {
       if (result) {
         this.dataSource.data = [...this.dataSource.data, result]; // Añade el nuevo usuario a la tabla
       }

@@ -17,15 +17,16 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { AddUsersComponent } from '../add-users/add-users.component';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { ApiService } from '../services/api.service';
-import { Usuario } from '../models/usuario.model';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Proyecto } from '../../models/proyectos.model';
+import { AddUsersComponent } from '../add-users/add-users.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ApiService } from '../../services/api.service';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-usuarios',
+  selector: 'app-proyectos',
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -40,22 +41,25 @@ import { Usuario } from '../models/usuario.model';
     FormsModule,
     MatDialogModule,
     MatIconModule,
+    MatProgressSpinnerModule
   ],
+  templateUrl: './proyectos.component.html',
+  styleUrls: ['./proyectos.component.scss'],
   providers: [ApiService],
-  templateUrl: './usuarios.component.html',
-  styleUrl: './usuarios.component.scss',
 })
-export class UsuariosComponent {
+export class ProyectosComponent implements OnInit {
   allColumns = [
     { name: 'ID', property: 'id', visible: true },
-    { name: 'Nombre', property: 'Nombre', visible: true },
-    { name: 'Rol', property: 'Rol', visible: true },
-    { name: 'Password', property: 'Password', visible: true },
+    { name: 'Nombre del Archivo', property: 'filename', visible: true },
+    { name: 'Tamaño', property: 'size', visible: true },
+    { name: 'Ultima Modificación', property: 'last_modified', visible: true },
+    { name: 'Sheet ID', property: 'sheetid', visible: true },
   ];
+  isLoading: boolean = false;
   ApiService: any;
 
   columnFilter: string = '';
-  dataSource = new MatTableDataSource<Usuario>([]);
+  dataSource = new MatTableDataSource<Proyecto>([]);
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -67,8 +71,8 @@ export class UsuariosComponent {
   ) {}
 
   ngOnInit(): void {
-    this.getUsersFromApi();
-    this.dataSource.filterPredicate = (data: Usuario, filter: string) => {
+    this.getProjectsFromApi();
+    this.dataSource.filterPredicate = (data: Proyecto, filter: string) => {
       const dataStr = Object.values(data).join(' ').toLowerCase(); // Convertir todos los valores de la fila a texto
       // Normalizar los datos y el filtro antes de compararlos
       const normalizedDataStr = this.removeTildes(dataStr);
@@ -82,35 +86,41 @@ export class UsuariosComponent {
     this.dataSource.paginator = this.paginator;
   }
 
+  removeTildes(str: string): string {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Elimina los caracteres diacríticos
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    const normalizedFilterValue = this.removeTildes(filterValue).trim().toLowerCase();
+    const normalizedFilterValue = this.removeTildes(filterValue)
+      .trim()
+      .toLowerCase();
     this.dataSource.filter = normalizedFilterValue;
   }
-  
-  removeTildes(str: string): string {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');  // Elimina los caracteres diacríticos
-  }
-  
+
   get displayedColumns(): string[] {
     return this.allColumns
       .filter((column) => column.visible)
       .map((column) => column.property);
   }
 
-  getUsersFromApi(): void {
-    this.apiService.getUsers().subscribe(
+  getProjectsFromApi(): void {
+    this.isLoading = true; // Inicia la carga
+    this.apiService.getProyects().subscribe(
       (data: any[]) => {
         const mappedData = data.map((item) => ({
           id: item.id,
-          Nombre: item['Nombre'],
-          Rol: item['Rol'],
-          Password: item['Password'],
+          filename: item.filename,
+          size: item.size,
+          last_modified: item.last_modified,
+          sheetid: item.sheetid,
         }));
         this.dataSource.data = mappedData;
+        this.isLoading = false; // Finaliza la carga
       },
       (error) => {
         console.error('Error al obtener los usuarios:', error);
+        this.isLoading = false; // Finaliza la carga en caso de error
       }
     );
   }
@@ -135,7 +145,7 @@ export class UsuariosComponent {
       panelClass: 'custom-dialog',
     });
 
-    dialogRef.afterClosed().subscribe((result: Usuario) => {
+    dialogRef.afterClosed().subscribe((result: Proyecto) => {
       if (result) {
         this.dataSource.data = [...this.dataSource.data, result]; // Añade el nuevo usuario a la tabla
       }

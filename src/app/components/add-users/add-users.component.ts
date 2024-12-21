@@ -5,9 +5,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ApiService } from '../services/api.service';
+import { ApiService } from '../../services/api.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Usuario } from '../models/usuario.model';
+import { Usuario } from '../../models/usuario.model';
 import Swal from 'sweetalert2';
 
 @Component({
