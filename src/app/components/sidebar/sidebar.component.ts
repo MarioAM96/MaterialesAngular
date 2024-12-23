@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { SidebarService } from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -9,14 +10,13 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
 })
 export class SidebarComponent implements OnInit {
-  userName: string = ''; // Variable para el nombre del usuario
-  userRol: string = ''; // Variable para el rol del usuario
-  isCollapsed: boolean = false; // Estado de la barra lateral (expandida o colapsada)
+  userName: string = '';
+  userRol: string = '';
+  isCollapsed: boolean = false;
 
-  @Output() toggle = new EventEmitter<boolean>(); // Emisor para notificar cambios
+  constructor(private sidebarService: SidebarService) {}
 
   ngOnInit() {
-    // Recuperamos el nombre y el rol del usuario desde sessionStorage
     const storedUserName = sessionStorage.getItem('userName');
     const storedRol = sessionStorage.getItem('authToken');
     
@@ -26,11 +26,13 @@ export class SidebarComponent implements OnInit {
     if (storedRol) {
       this.userRol = storedRol;
     }
+
+    this.sidebarService.sidebarCollapsed$.subscribe(
+      (collapsed) => (this.isCollapsed = collapsed)
+    );
   }
 
-  // Método para alternar el estado de la barra lateral (colapsada o expandida)
   toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
-    this.toggle.emit(this.isCollapsed); // Emitimos el nuevo estado
+    this.sidebarService.toggleSidebar();
   }
 }

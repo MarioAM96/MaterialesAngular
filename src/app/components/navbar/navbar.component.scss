@@ -1,99 +1,150 @@
 nav {
-  background-color: #f8f9fa;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 5px 10px;
+  background-color: #fff;
+  padding: 0 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e0e0e0;
+  height: 60px;
+  border-bottom: 1px solid #eaeaea;
+  justify-content: space-between; // Asegura que los elementos se distribuyan entre los extremos
 }
 
-.navbar-brand {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #212529;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.left-section {
+  display: flex;
+  align-items: center;
+
+  .menu-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin-right: 40px; // Espacio entre el botón y "Proyectos"
+
+    .burger-icon {
+      width: 24px;
+      height: 2px;
+      background-color: #333;
+      position: relative;
+      transition: all 0.3s ease;
+
+      &::before,
+      &::after {
+        content: '';
+        width: 24px;
+        height: 2px;
+        background-color: #333;
+        position: absolute;
+        left: 0;
+        transition: all 0.3s ease;
+      }
+
+      &::before {
+        top: -8px;
+      }
+
+      &::after {
+        top: 8px;
+      }
+    }
+
+    &:hover .burger-icon,
+    &:hover .burger-icon::before,
+    &:hover .burger-icon::after {
+      background-color: #555;
+    }
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 }
 
 .user-menu {
   position: relative;
-}
-
-.user-name {
-  font-size: 14px;
-  padding: 5px 10px;
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #b0c4de;
-  border-radius: 25px;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  transition: background-color 0.3s ease;
-}
 
-.user-name:hover {
-  background-color: #e0e0e0;
-}
+  .user-name {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #333;
+    padding: 0;
 
-.user-initials {
-  background-color: #d3d3d3;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 10px;
-  font-weight: bold;
-  color: #333;
-}
+    .user-initials {
+      background-color: #333;
+      color: #fff;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 500;
+      font-size: 14px;
+      margin-right: 10px;
+    }
 
-.user-fullname {
-  margin-right: 10px;
-}
+    .user-fullname {
+      font-size: 14px;
+      font-weight: 400;
+      margin-right: 5px;
+    }
 
-.arrow {
-  font-size: 12px;
-  color: #333;
-}
+    .arrow {
+      font-size: 12px;
+      color: #333;
+      transition: transform 0.3s ease;
+    }
 
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  overflow: hidden;
-  display: none;
-  z-index: 1000;
-}
+    &.open .arrow {
+      transform: rotate(180deg);
+    }
+  }
 
-.dropdown-menu.show {
-  display: block;
-}
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    display: none;
+    z-index: 1000;
+    min-width: 150px;
 
-.btn-logout {
-  font-size: 16px;
-  padding: 10px 20px;
-  width: 100%;
-  text-align: left;
-  background-color: transparent;
-  color: #a33;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: color 0.3s ease;
-}
+    &.show {
+      display: block;
+    }
+  }
 
-.btn-logout:hover {
-  color: #800;
-}
+  .btn-logout {
+    font-size: 14px;
+    padding: 10px 20px;
+    width: 100%;
+    text-align: left;
+    background-color: transparent;
+    color: #333;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
 
-.logout-icon {
-  margin-right: 8px;
-  font-size: 18px;
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+    .logout-icon {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+  }
 }

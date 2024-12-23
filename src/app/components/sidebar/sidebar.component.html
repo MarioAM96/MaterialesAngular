@@ -1,8 +1,8 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
   <div class="sidebar-header">
     <div class="user-info">
-      <button (click)="toggleSidebar()">☰</button>
-      <span class="user-text">{{ userRol }}</span>
+      <!-- <button (click)="toggleSidebar()">☰</button> -->
+      <span class="user-text" *ngIf="!isCollapsed">{{ userRol }}</span>
     </div>
   </div>
   
@@ -10,31 +10,31 @@
     <li>
       <a routerLink="/dashboard" class="sidebar-link">
         <i class="icon">🏠</i>
-        <span class="link-text">Dashboard</span>
+        <span class="link-text" *ngIf="!isCollapsed">Dashboard</span>
       </a>
     </li>
     <li>
       <a routerLink="/settings" class="sidebar-link">
         <i class="icon">⚙️</i>
-        <span class="link-text">Settings</span>
+        <span class="link-text" *ngIf="!isCollapsed">Settings</span>
       </a>
     </li>
     <li>
       <a routerLink="/proyectos" class="sidebar-link">
         <i class="icon">🔖</i>
-        <span class="link-text">Proyectos</span>
+        <span class="link-text" *ngIf="!isCollapsed">Proyectos</span>
       </a>
     </li>
     <li>
       <a routerLink="/usuarios" class="sidebar-link">
         <i class="icon">👥</i>
-        <span class="link-text">Usuarios</span>
+        <span class="link-text" *ngIf="!isCollapsed">Usuarios</span>
       </a>
     </li>
     <li>
       <a routerLink="/materiales" class="sidebar-link">
         <i class="icon">📦</i>
-        <span class="link-text">Materiales</span>
+        <span class="link-text" *ngIf="!isCollapsed">Materiales</span>
       </a>
     </li>
   </ul>

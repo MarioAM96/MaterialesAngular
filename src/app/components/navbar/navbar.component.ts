@@ -1,6 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { SidebarService } from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,7 +12,11 @@ export class NavbarComponent implements OnInit {
   userName: string | null = '';
   menuOpen: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private sidebarService: SidebarService
+  ) {}
 
   ngOnInit() {
     this.userName = sessionStorage.getItem('userName');
@@ -38,5 +43,9 @@ export class NavbarComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  toggleSidebar() {
+    this.sidebarService.toggleSidebar();
   }
 }

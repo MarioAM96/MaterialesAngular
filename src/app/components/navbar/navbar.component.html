@@ -1,17 +1,20 @@
-<nav class="navbar">
-  <div class="container-fluid">
+<nav>
+  <div class="left-section">
+    <button (click)="toggleSidebar()" class="menu-button">
+      <div class="burger-icon"></div>
+    </button>
     <div class="navbar-brand">Proyectos</div>
-    <div class="user-menu">
-      <button class="user-name" (click)="toggleMenu($event)">
-        <span class="user-initials">{{ getUserInitials() }}</span>
-        <span class="user-fullname">{{ userName }}</span>
-        <span class="arrow">&#9662;</span>
+  </div>
+  <div class="user-menu">
+    <button class="user-name" [class.open]="menuOpen" (click)="toggleMenu($event)">
+      <span class="user-initials">{{ getUserInitials() }}</span>
+      <span class="user-fullname">{{ userName }}</span>
+      <span class="arrow">&#9662;</span>
+    </button>
+    <div class="dropdown-menu" [class.show]="menuOpen">
+      <button class="btn-logout" (click)="logout()">
+        <span class="logout-icon">&#10142;</span> Salir
       </button>
-      <div class="dropdown-menu" [class.show]="menuOpen">
-        <button class="btn-logout" (click)="logout()">
-          <span class="logout-icon">➤</span> Salir
-        </button>
-      </div>
     </div>
   </div>
 </nav>
