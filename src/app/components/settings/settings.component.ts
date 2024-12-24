@@ -24,9 +24,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     {
       field: 'last_modified',
       headerName: 'Última Modificación',
-      // Si deseas mostrar la fecha en formato legible, puedes usar un cellRenderer
       valueFormatter: (params) => {
-        const date = new Date(params.value * 1000); // Asumiendo que 'last_modified' es un timestamp en segundos
+        const date = new Date(params.value * 1000);
         return date.toLocaleDateString();
       },
     },
@@ -45,11 +44,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   constructor(private apiService: ApiService) {}
 
   ngOnInit() {
-    // Llama al método getProyects() del servicio ApiService al cargar el componente
     this.apiService.getProyects().subscribe(
       (response) => {
         console.log('Proyectos obtenidos:', response);
-        // Asigna los proyectos obtenidos a rowData
         this.rowData = response;
       },
       (error) => {
@@ -59,7 +56,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Ahora puedes acceder a la API de Ag-Grid
     console.log(this.myGrid.api);
   }
 }
