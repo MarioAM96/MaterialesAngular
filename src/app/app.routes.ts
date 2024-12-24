@@ -6,6 +6,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { ProyectosComponent } from './components/proyectos/proyectos.component';
 import { UsuariosComponent } from './components/usuarios/usuarios.component';
 import { MaterialsComponent } from './components/materials/materials.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -17,6 +18,7 @@ export const routes: Routes = [
       { path: 'proyectos', component: ProyectosComponent, canActivate: [AuthGuard] },
       { path: 'usuarios', component: UsuariosComponent, canActivate: [AuthGuard] },
       { path: 'materiales', component: MaterialsComponent, canActivate: [AuthGuard] },
+      { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
       // Agrega más rutas aquí si es necesario
     ]
   }
