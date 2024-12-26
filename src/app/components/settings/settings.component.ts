@@ -1,8 +1,11 @@
+// Import necessary Angular and Ag-Grid modules
 import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, ModuleRegistry } from 'ag-grid-community';
 import { ApiService } from '../../services/api.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+
+// Register all community modules with ag-Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
@@ -16,7 +19,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   @ViewChild('myGrid') myGrid!: AgGridAngular;
 
   public rowData: any[] | null = null;
+  private checkboxStates: { [key: string]: boolean } = {};
 
+  // Define columns for the grid including the custom operation column
   public columnDefs: ColDef[] = [
     { field: 'id', headerName: 'ID' },
     { field: 'filename', headerName: 'Nombre de Archivo', editable: true },
@@ -30,8 +35,34 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       },
     },
     { field: 'sheetid', headerName: 'Sheet ID' },
+    {
+      headerName: 'Acciones',
+      cellRenderer: (params: any) => {
+        const container = document.createElement('div');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = this.checkboxStates[params.data.id] || false;
+
+        const statusText = document.createElement('span');
+        statusText.style.marginLeft = '8px';
+        statusText.textContent = checkbox.checked ? 'Activo' : 'Inactivo';
+
+        checkbox.addEventListener('change', () => {
+          this.onCheckboxChange(params, checkbox.checked);
+          statusText.textContent = checkbox.checked ? 'Activo' : 'Inactivo';
+        });
+
+        container.appendChild(checkbox);
+        container.appendChild(statusText);
+        return container;
+      },
+      cellStyle: (params) => {
+        return this.checkboxStates[params.data.id] ? { backgroundColor: 'green' } : { backgroundColor: '' };
+      },
+    },
   ];
 
+  // Default column definition for all the columns
   public defaultColDef: ColDef = {
     filter: 'agTextColumnFilter',
     floatingFilter: true,
@@ -58,4 +89,28 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     console.log(this.myGrid.api);
   }
+
+  // Method to handle checkbox change event
+  // Method to handle checkbox change event
+onCheckboxChange(params: any, isChecked: boolean) {
+  const rowId = params.data.id;
+
+  // If the checkbox is being checked, uncheck all others
+  if (isChecked) {
+    // Reset all checkbox states
+    for (const key in this.checkboxStates) {
+      if (this.checkboxStates.hasOwnProperty(key)) {
+        this.checkboxStates[key] = false;
+      }
+    }
+  }
+
+  // Set the current checkbox state
+  this.checkboxStates[rowId] = isChecked;
+
+  // Refresh the grid to reflect changes
+  this.myGrid.api.refreshCells({ force: true });
+
+  console.log('Checkbox changed for ID:', rowId, 'Checked:', isChecked);
+}
 }
