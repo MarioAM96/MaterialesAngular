@@ -18,7 +18,7 @@ export class ActiveSheetService {
   }
 
   getActiveSheetId() {
-    return this.activeSheetIdSubject.getValue();
+    return sessionStorage.getItem('activeSheetId');
   }
 
   getActiveSheetFilename() {
