@@ -13,26 +13,29 @@ export class ApiService {
 
   addUser(payload: any): Observable<any> {
     const activeSheetId = this.activeSheetService.getActiveSheetId();
-    if (!activeSheetId) {
-      throw new Error('Active sheet ID is not set');
+    const activeSheetFilename = this.activeSheetService.getActiveSheetFilename();
+    if (!activeSheetId || !activeSheetFilename) {
+      throw new Error('Datos API GOOGLE no disponibles');
     }
-    return this.http.post(this.apiUrl + 'insert-user/' + activeSheetId + '/materiales-fibramax-65bb0c225f90.json', payload);
+    return this.http.post(this.apiUrl + 'insert-user/' + activeSheetId + '/' + activeSheetFilename, payload);
   }
 
   getUsers(): Observable<any> {
     const activeSheetId = this.activeSheetService.getActiveSheetId();
-    if (!activeSheetId) {
-      throw new Error('Active sheet ID is not set');
+    const activeSheetFilename = this.activeSheetService.getActiveSheetFilename();
+    if (!activeSheetId || !activeSheetFilename) {
+      throw new Error('Datos API GOOGLE no disponibles');
     }
-    return this.http.get(this.apiUrl + 'get-data/' + activeSheetId + '/EQUIPO/materiales-fibramax-65bb0c225f90.json');
+    return this.http.get(this.apiUrl + 'get-data/' + activeSheetId + '/EQUIPO/' + activeSheetFilename);
   }
 
   getMaterials(): Observable<any> {
     const activeSheetId = this.activeSheetService.getActiveSheetId();
-    if (!activeSheetId) {
-      throw new Error('Active sheet ID is not set');
+    const activeSheetFilename = this.activeSheetService.getActiveSheetFilename();
+    if (!activeSheetId || !activeSheetFilename) {
+      throw new Error('Datos API GOOGLE no disponibles');
     }
-    return this.http.get(this.apiUrl + 'get-data/' + activeSheetId + '/MATERIAL_STOCK/materiales-fibramax-65bb0c225f90.json');
+    return this.http.get(this.apiUrl + 'get-data/' + activeSheetId + '/MATERIAL_STOCK/' + activeSheetFilename);
   }
 
   getProyects(): Observable<any> {

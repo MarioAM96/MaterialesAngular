@@ -52,8 +52,14 @@ export class LoginComponent {
 
   onProjectSelect() {
     if (this.selectedProject) {
-      this.activeSheetService.setActiveSheetId(this.selectedProject);
-      this.router.navigate(['/dashboard'], { queryParams: { project: this.selectedProject } });
+      const selectedProject = this.projects.find(project => project.sheetid === this.selectedProject);
+      
+      if (selectedProject) {
+        this.activeSheetService.setActiveSheetId(this.selectedProject);
+        sessionStorage.setItem('activeSheetFilename', selectedProject.filename);
+  
+        this.router.navigate(['/dashboard'], { queryParams: { project: this.selectedProject } });
+      }
     }
   }
 }

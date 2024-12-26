@@ -20,4 +20,8 @@ export class ActiveSheetService {
   getActiveSheetId() {
     return this.activeSheetIdSubject.getValue();
   }
+
+  getActiveSheetFilename() {
+    return sessionStorage.getItem('activeSheetFilename');
+  }
 }
