@@ -4,6 +4,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, ModuleRegistry } from 'ag-grid-community';
 import { ApiService } from '../../services/api.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { ActiveSheetService } from '../../services/activesheet.service';
 
 // Register all community modules with ag-Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -57,7 +58,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         return container;
       },
       cellStyle: (params) => {
-        return this.checkboxStates[params.data.id] ? { backgroundColor: 'green' } : { backgroundColor: '' };
+        return this.checkboxStates[params.data.id]
+          ? { backgroundColor: 'green' }
+          : { backgroundColor: '' };
       },
     },
   ];
@@ -72,7 +75,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   public paginationPageSize = 10;
   public paginationPageSizeSelector: number[] = [10, 25, 50];
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private activeSheetService: ActiveSheetService) {}
 
   ngOnInit() {
     this.apiService.getProyects().subscribe(
@@ -92,25 +95,25 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
   // Method to handle checkbox change event
   // Method to handle checkbox change event
-onCheckboxChange(params: any, isChecked: boolean) {
-  const rowId = params.data.id;
-
-  // If the checkbox is being checked, uncheck all others
-  if (isChecked) {
-    // Reset all checkbox states
-    for (const key in this.checkboxStates) {
-      if (this.checkboxStates.hasOwnProperty(key)) {
-        this.checkboxStates[key] = false;
+  onCheckboxChange(params: any, isChecked: boolean) {
+    const rowId = params.data.id;
+  
+    if (isChecked) {
+      for (const key in this.checkboxStates) {
+        if (this.checkboxStates.hasOwnProperty(key)) {
+          this.checkboxStates[key] = false;
+        }
       }
     }
+  
+    this.checkboxStates[rowId] = isChecked;
+    this.myGrid.api.refreshCells({ force: true });
+  
+    if (isChecked) {
+      const sheetId = params.data.sheetid;
+      this.activeSheetService.setActiveSheetId(sheetId);
+    } else {
+      this.activeSheetService.setActiveSheetId(null);
+    }
   }
-
-  // Set the current checkbox state
-  this.checkboxStates[rowId] = isChecked;
-
-  // Refresh the grid to reflect changes
-  this.myGrid.api.refreshCells({ force: true });
-
-  console.log('Checkbox changed for ID:', rowId, 'Checked:', isChecked);
-}
 }

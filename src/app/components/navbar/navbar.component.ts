@@ -2,6 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { SidebarService } from '../../services/sidebar.service';
+import { ActiveSheetService } from '../../services/activesheet.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,16 +11,21 @@ import { SidebarService } from '../../services/sidebar.service';
 })
 export class NavbarComponent implements OnInit {
   userName: string | null = '';
+  activeSheetId: string | null = '';
   menuOpen: boolean = false;
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
+    private activeSheetService: ActiveSheetService
   ) {}
 
   ngOnInit() {
     this.userName = sessionStorage.getItem('userName');
+    this.activeSheetService.activeSheetId$.subscribe(sheetId => {
+      this.activeSheetId = sheetId;
+    });
   }
 
   getUserInitials(): string {
