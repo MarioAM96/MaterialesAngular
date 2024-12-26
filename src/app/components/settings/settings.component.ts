@@ -78,10 +78,20 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   constructor(private apiService: ApiService, private activeSheetService: ActiveSheetService) {}
 
   ngOnInit() {
+    // Retrieve activeSheetId from sessionStorage
+    const activeSheetId = sessionStorage.getItem('activeSheetId');
+  
     this.apiService.getProyects().subscribe(
       (response) => {
         console.log('Proyectos obtenidos:', response);
         this.rowData = response;
+  
+        // Set checkbox states based on activeSheetId
+        if (activeSheetId) {
+          this.rowData?.forEach((row) => {
+            this.checkboxStates[row.id] = row.sheetid === activeSheetId;
+          });
+        }
       },
       (error) => {
         console.error('Error al obtener los proyectos:', error);
@@ -93,8 +103,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     console.log(this.myGrid.api);
   }
 
-  // Method to handle checkbox change event
-  // Method to handle checkbox change event
   onCheckboxChange(params: any, isChecked: boolean) {
     const rowId = params.data.id;
   
@@ -113,9 +121,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       const sheetId = params.data.sheetid;
       const filename = params.data.filename;
       this.activeSheetService.setActiveSheetId(sheetId);
+      sessionStorage.setItem('activeSheetId', sheetId); // Store activeSheetId
       sessionStorage.setItem('activeSheetFilename', filename);
     } else {
       this.activeSheetService.setActiveSheetId(null);
+      sessionStorage.removeItem('activeSheetId'); // Remove activeSheetId
       sessionStorage.setItem('activeSheetFilename', '');
     }
   }
