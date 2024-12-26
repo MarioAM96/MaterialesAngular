@@ -121,7 +121,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       const sheetId = params.data.sheetid;
       const filename = params.data.filename;
       this.activeSheetService.setActiveSheetId(sheetId);
-      sessionStorage.setItem('activeSheetId', sheetId); // Store activeSheetId
       sessionStorage.setItem('activeSheetFilename', filename);
     } else {
       this.activeSheetService.setActiveSheetId(null);

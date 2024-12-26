@@ -21,10 +21,23 @@ export class NavbarComponent implements OnInit {
     private activeSheetService: ActiveSheetService
   ) {}
 
+  // ngOnInit() {
+  //   this.userName = sessionStorage.getItem('userName');
+  //   this.activeSheetId = sessionStorage.getItem('activeSheetId');
+  //   this.activeSheetService.activeSheetId$.subscribe(sheetId => {
+  //     this.activeSheetId = sheetId;
+  //   });
+  // }
+
   ngOnInit() {
     this.userName = sessionStorage.getItem('userName');
+    const initialActiveSheetId = this.activeSheetService.getActiveSheetId();
     this.activeSheetService.activeSheetId$.subscribe(sheetId => {
-      this.activeSheetId = sheetId;
+      if (sheetId === null) {
+        this.activeSheetId = initialActiveSheetId;
+      } else {
+        this.activeSheetId = sheetId;
+      }
     });
   }
 

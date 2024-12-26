@@ -27,6 +27,9 @@ export class AuthService {
 
   logout() {
     sessionStorage.removeItem(this.tokenKey);
+    sessionStorage.removeItem('activeSheetFilename');
+    sessionStorage.removeItem('activeSheetId');
+    sessionStorage.removeItem('userName');
   }
 
   isAuthenticated(): boolean {

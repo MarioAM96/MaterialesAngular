@@ -53,6 +53,7 @@ export class LoginComponent {
   onProjectSelect() {
     if (this.selectedProject) {
       const selectedProject = this.projects.find(project => project.sheetid === this.selectedProject);
+      console.log('selectedProject', selectedProject);
       
       if (selectedProject) {
         this.activeSheetService.setActiveSheetId(this.selectedProject);
