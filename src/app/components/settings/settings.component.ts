@@ -1,4 +1,3 @@
-// Import necessary Angular and Ag-Grid modules
 import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, ModuleRegistry } from 'ag-grid-community';
@@ -6,9 +5,7 @@ import { ApiService } from '../../services/api.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { ActiveSheetService } from '../../services/activesheet.service';
 
-// Register all community modules with ag-Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
-
 @Component({
   selector: 'my-app',
   imports: [AgGridAngular, HttpClientModule],

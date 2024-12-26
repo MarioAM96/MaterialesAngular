@@ -8,6 +8,8 @@ import { UsuariosComponent } from './components/usuarios/usuarios.component';
 import { MaterialsComponent } from './components/materials/materials.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { RoleGuard } from './guards/role.guard';
+import { OrdersComponent } from './components/orders/orders.component';
+import { DeliveriesComponent } from './components/deliveries/deliveries.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -42,6 +44,18 @@ export const routes: Routes = [
       { 
         path: 'settings', 
         component: SettingsComponent, 
+        canActivate: [AuthGuard, RoleGuard], 
+        data: { expectedRoles: ['Administrador','Técnico'] } 
+      },
+      { 
+        path: 'orders', 
+        component: OrdersComponent, 
+        canActivate: [AuthGuard, RoleGuard], 
+        data: { expectedRoles: ['Administrador','Técnico'] } 
+      },
+      { 
+        path: 'delivieries', 
+        component: DeliveriesComponent, 
         canActivate: [AuthGuard, RoleGuard], 
         data: { expectedRoles: ['Administrador','Técnico'] } 
       },

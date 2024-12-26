@@ -1,0 +1,108 @@
+.container-fluid {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.create-button {
+    background-color: black;
+    color: white;
+    border-radius: 20px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+.cancel-button {
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px; /* Espacio entre los botones */
+}
+
+.submit-button, .send-button {
+    background-color: black;
+    color: white;
+    border-radius: 5px; // Less rounded corners for form and list buttons
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.form-container {
+    flex: 0 0 auto;
+    display: flex;
+    width: 100%;
+    margin-bottom: 20px; // Add space between form container and grid
+}
+
+.order-form {
+    flex: 0 0 50%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.form-group:last-child {
+    margin-right: 0;
+}
+
+label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.submit-button {
+    align-self: flex-end;
+}
+
+.card {
+    flex: 1;
+    padding: 20px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.send-button {
+    padding: 5px 10px; // Smaller size for the "Enviar Pedidos" button
+}
+
+.grid-container {
+    flex: 1 1 auto;
+    overflow: hidden;
+    margin-top: 20px; // Add space between form container and grid
+}

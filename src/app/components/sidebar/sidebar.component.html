@@ -12,6 +12,18 @@
         <span class="link-text" *ngIf="!isCollapsed">Dashboard</span>
       </a>
     </li>
+    <li *ngIf="userRol === 'Administrador' || userRol === 'Técnico'">
+      <a routerLink="/orders" class="sidebar-link">
+        <i class="icon">🧳</i>
+        <span class="link-text" *ngIf="!isCollapsed">Pedidos</span>
+      </a>
+    </li>
+    <li *ngIf="userRol === 'Administrador' || userRol === 'Técnico'">
+      <a routerLink="/delivieries" class="sidebar-link">
+        <i class="icon">✅</i>
+        <span class="link-text" *ngIf="!isCollapsed">Entregas</span>
+      </a>
+    </li>
     <li *ngIf="userRol === 'Administrador'">
       <a routerLink="/settings" class="sidebar-link">
         <i class="icon">⚙️</i>

@@ -38,6 +38,24 @@ export class ApiService {
     return this.http.get(this.apiUrl + 'get-data/' + activeSheetId + '/MATERIAL_STOCK/' + activeSheetFilename);
   }
 
+  getOrders(): Observable<any> {
+    const activeSheetId = this.activeSheetService.getActiveSheetId();
+    const activeSheetFilename = this.activeSheetService.getActiveSheetFilename();
+    if (!activeSheetId || !activeSheetFilename) {
+      throw new Error('Datos API GOOGLE no disponibles');
+    }
+    return this.http.get(this.apiUrl + 'get-orders/' + activeSheetId + '/PEDIDOS/' + activeSheetFilename);
+  }
+
+  getDeliveries(): Observable<any> {
+    const activeSheetId = this.activeSheetService.getActiveSheetId();
+    const activeSheetFilename = this.activeSheetService.getActiveSheetFilename();
+    if (!activeSheetId || !activeSheetFilename) {
+      throw new Error('Datos API GOOGLE no disponibles');
+    }
+    return this.http.get(this.apiUrl + 'get-deliveries/' + activeSheetId + '/PEDIDOS/' + activeSheetFilename);
+  }
+
   getProyects(): Observable<any> {
     return this.http.get(this.apiUrl + 'get-keys');
   }

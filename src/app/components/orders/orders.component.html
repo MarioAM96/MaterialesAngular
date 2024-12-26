@@ -1,0 +1,97 @@
+<div class="container-fluid mt-4">
+    <div class="header">
+        <h1>PEDIDOS</h1>
+        <button (click)="toggleForm()" class="btn btn-primary mb-3 create-button">+ Crear</button>
+    </div>
+    <div *ngIf="showForm" class="form-container">
+        <!-- Formulario de Pedido -->
+        <div class="order-form">
+            <form (ngSubmit)="addOrder()">
+                <h3>Nuevo Pedido</h3>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="material">Material Solicitado</label>
+                        <select [(ngModel)]="newOrder.material" name="material" class="form-control" id="material">
+                            <option *ngFor="let material of materials" [value]="material">{{material}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="cantidad">Cantidad</label>
+                        <input type="number" [(ngModel)]="newOrder.cantidad" name="cantidad" class="form-control"
+                            id="cantidad" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="observacion">Observación</label>
+                        <input type="text" [(ngModel)]="newOrder.observacion" name="observacion" class="form-control"
+                            id="observacion">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="fechaSolicitada">Fecha Solicitada</label>
+                        <input type="date" [(ngModel)]="newOrder.fechaSolicitada" name="fechaSolicitada"
+                            class="form-control" id="fechaSolicitada" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="paqueteTrabajo">Paquete de Trabajo</label>
+                        <input type="text" [(ngModel)]="newOrder.paqueteTrabajo" name="paqueteTrabajo"
+                            class="form-control" id="paqueteTrabajo">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="tecnico">Técnico Responsable</label>
+                        <select [(ngModel)]="newOrder.tecnico" name="tecnico" class="form-control" id="tecnico">
+                            <option *ngFor="let tecnico of tecnicos" [value]="tecnico">{{tecnico}}</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success submit-button">Agregar Pedido</button>
+                <button type="button" (click)="cancelOrder()" class="btn btn-secondary cancel-button">Cancelar</button>
+            </form>
+        </div>
+
+        <!-- Lista de Pedidos -->
+        <div class="card">
+            <h3>Pedidos en Lista</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Cantidad</th>
+                        <th>Observación</th>
+                        <th>Fecha Solicitada</th>
+                        <th>Paquete de Trabajo</th>
+                        <th>Técnico</th>
+                        <th>Acciones</th> <!-- Nueva columna para acciones -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let pedido of pedidosList; let i = index">
+                        <td>{{ pedido.material }}</td>
+                        <td>{{ pedido.cantidad }}</td>
+                        <td>{{ pedido.observacion }}</td>
+                        <td>{{ pedido.fechaSolicitada }}</td>
+                        <td>{{ pedido.paqueteTrabajo }}</td>
+                        <td>{{ pedido.tecnico }}</td>
+                        <td>
+                            <button (click)="removeOrder(i)" class="btn btn-danger">Eliminar</button>
+                            <!-- Botón de eliminación -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="button-container">
+                <button (click)="submitOrders()" class="btn btn-primary send-button">Enviar Pedidos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid de Pedidos -->
+    <div class="grid-container">
+        <ag-grid-angular #myGrid style="width: 100%; height: 100%;" [rowData]="rowData" [columnDefs]="columnDefs"
+            [defaultColDef]="defaultColDef" [rowSelection]="rowSelection" [pagination]="true"
+            [paginationPageSize]="paginationPageSize" [paginationPageSizeSelector]="paginationPageSizeSelector"
+            [enableCellTextSelection]="true"></ag-grid-angular>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+<div style="text-align: left; font-size: 30px; font-weight: bold; margin-bottom: 10px;">
+    ENTREGAS
+  </div>
+  <ag-grid-angular
+    #myGrid
+    style="width: 100%; height: 100%;"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [rowSelection]="rowSelection"
+    [pagination]="true"
+    [paginationPageSize]="paginationPageSize"
+    [paginationPageSizeSelector]="paginationPageSizeSelector"
+    [enableCellTextSelection]="true"
+  ></ag-grid-angular>
