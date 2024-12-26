@@ -1,37 +1,36 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
   <div class="sidebar-header">
     <div class="user-info">
-      <!-- <button (click)="toggleSidebar()">☰</button> -->
       <span class="user-text" *ngIf="!isCollapsed">{{ userRol }}</span>
     </div>
   </div>
   
   <ul class="list-unstyled">
-    <li>
+    <li *ngIf="userRol === 'Administrador' || userRol === 'Técnico'">
       <a routerLink="/dashboard" class="sidebar-link">
         <i class="icon">🏠</i>
         <span class="link-text" *ngIf="!isCollapsed">Dashboard</span>
       </a>
     </li>
-    <li>
+    <li *ngIf="userRol === 'Administrador'">
       <a routerLink="/settings" class="sidebar-link">
         <i class="icon">⚙️</i>
         <span class="link-text" *ngIf="!isCollapsed">Settings</span>
       </a>
     </li>
-    <li>
+    <li *ngIf="userRol === 'Administrador' || userRol === 'Técnico'">
       <a routerLink="/proyectos" class="sidebar-link">
         <i class="icon">🔖</i>
         <span class="link-text" *ngIf="!isCollapsed">Proyectos</span>
       </a>
     </li>
-    <li>
+    <li *ngIf="userRol === 'Administrador'">
       <a routerLink="/usuarios" class="sidebar-link">
         <i class="icon">👥</i>
         <span class="link-text" *ngIf="!isCollapsed">Usuarios</span>
       </a>
     </li>
-    <li>
+    <li *ngIf="userRol === 'Administrador' || userRol === 'Técnico'">
       <a routerLink="/materiales" class="sidebar-link">
         <i class="icon">📦</i>
         <span class="link-text" *ngIf="!isCollapsed">Materiales</span>

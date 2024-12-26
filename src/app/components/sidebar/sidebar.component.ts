@@ -31,8 +31,4 @@ export class SidebarComponent implements OnInit {
       (collapsed) => (this.isCollapsed = collapsed)
     );
   }
-
-  toggleSidebar() {
-    this.sidebarService.toggleSidebar();
-  }
 }

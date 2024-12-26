@@ -7,19 +7,44 @@ import { ProyectosComponent } from './components/proyectos/proyectos.component';
 import { UsuariosComponent } from './components/usuarios/usuarios.component';
 import { MaterialsComponent } from './components/materials/materials.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { RoleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   {
-    path: '', component: LayoutComponent,  // Ruta para el Layout, contiene el navbar
+    path: '', component: LayoutComponent,
     children: [
-      { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-      { path: 'proyectos', component: ProyectosComponent, canActivate: [AuthGuard] },
-      { path: 'usuarios', component: UsuariosComponent, canActivate: [AuthGuard] },
-      { path: 'materiales', component: MaterialsComponent, canActivate: [AuthGuard] },
-      { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
-      // Agrega más rutas aquí si es necesario
+      { 
+        path: 'dashboard', 
+        component: DashboardComponent, 
+        canActivate: [AuthGuard, RoleGuard], 
+        data: { expectedRoles: ['Administrador', 'Técnico'] } 
+      },
+      { 
+        path: 'proyectos', 
+        component: ProyectosComponent, 
+        canActivate: [AuthGuard, RoleGuard], 
+        data: { expectedRoles: ['Administrador'] } 
+      },
+      { 
+        path: 'usuarios', 
+        component: UsuariosComponent, 
+        canActivate: [AuthGuard, RoleGuard], 
+        data: { expectedRoles: ['Administrador'] } 
+      },
+      { 
+        path: 'materiales', 
+        component: MaterialsComponent, 
+        canActivate: [AuthGuard, RoleGuard], 
+        data: { expectedRoles: ['Administrador', 'Técnico'] } 
+      },
+      { 
+        path: 'settings', 
+        component: SettingsComponent, 
+        canActivate: [AuthGuard, RoleGuard], 
+        data: { expectedRoles: ['Administrador','Técnico'] } 
+      },
     ]
   }
 ];
