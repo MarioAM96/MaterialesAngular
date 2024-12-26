@@ -1,6 +1,8 @@
 <div class="login-container">
   <div class="background-effect"></div>
-  <form (ngSubmit)="onSubmit()">
+  
+  <!-- Formulario de inicio de sesión -->
+  <form *ngIf="!isLoggedIn" (ngSubmit)="onSubmit()">
     <h2 class="text-center">Gestión de Materiales</h2>
     <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
       {{ errorMessage }}
@@ -34,4 +36,13 @@
       <span class="visually-hidden">Loading...</span>
     </div>
   </form>
+
+  <!-- Selector de proyectos -->
+  <div *ngIf="isLoggedIn" class="project-selector">
+    <h2 class="text-center">Bienvenido</h2>
+    <p class="text-center">Selecciona el proyecto:</p>
+    <select id="projectSelect" [(ngModel)]="selectedProject" (change)="onProjectSelect()" class="form-control">
+      <option *ngFor="let project of projects" [value]="project.sheetid">{{ project.filename }}</option>
+    </select>
+  </div>
 </div>

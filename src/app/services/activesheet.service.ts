@@ -16,4 +16,8 @@ export class ActiveSheetService {
       sessionStorage.removeItem('activeSheetId');
     }
   }
+
+  getActiveSheetId() {
+    return this.activeSheetIdSubject.getValue();
+  }
 }
