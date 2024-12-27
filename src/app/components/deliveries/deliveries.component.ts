@@ -1,27 +1,47 @@
-import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, ModuleRegistry } from 'ag-grid-community';
 import { ApiService } from '../../services/api.service';
-import { HttpClientModule } from '@angular/common/http';
 import { ActiveSheetService } from '../../services/activesheet.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
+
+import { HttpClientModule } from '@angular/common/http';
+
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-deliveries',
-  imports: [AgGridAngular, HttpClientModule, FormsModule, CommonModule],
   templateUrl: './deliveries.component.html',
-  styleUrl: './deliveries.component.scss',
+  styleUrls: ['./deliveries.component.scss'],
   providers: [ApiService],
+  standalone: true,
+  imports: [
+    AgGridAngular,
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    MatStepperModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    HttpClientModule,
+  ],
 })
-export class DeliveriesComponent {
+export class DeliveriesComponent implements OnInit {
   @ViewChild('myGrid') myGrid!: AgGridAngular;
 
   public rowData: any[] | null = null;
-  public rowDataMaterials: any[] | null = null;
   public rowDataTecnicos: any[] | null = null;
 
   public columnDefs: ColDef[] = [
@@ -69,7 +89,7 @@ export class DeliveriesComponent {
       field: 'Cantidad Entregada',
       headerName: 'Cantidad Entregada',
       type: 'number',
-    }
+    },
   ];
 
   public defaultColDef: ColDef = {
@@ -81,67 +101,39 @@ export class DeliveriesComponent {
   public paginationPageSize = 10;
   public paginationPageSizeSelector: number[] = [10, 25, 50, 100, 200];
 
-  public showForm = false;
-  newOrder = {
-    material: '',
-    cantidad: null,
-    observacion: '',
-    fechaSolicitada: '',
-    paqueteTrabajo: '',
-    tecnico: '',
-  };
+  firstFormGroup!: FormGroup;
+  secondFormGroup!: FormGroup;
+  thirdFormGroup!: FormGroup;
+  isLinear = true;
+
   public materials: { name: string; value: string }[] = [];
   public tecnicos: { name: string; value: string }[] = [];
 
-  pedidosList: {
-    material: string;
-    cantidad: number | null;
-    observacion: string;
-    fechaSolicitada: string;
-    paqueteTrabajo: string;
-    tecnico: string;
-  }[] = [];
-
-  addOrder() {
-    this.pedidosList.push({ ...this.newOrder });
-    this.newOrder = {
-      material: '',
-      cantidad: null,
-      observacion: '',
-      fechaSolicitada: '',
-      paqueteTrabajo: '',
-      tecnico: '',
-    };
-  }
-
-  cancelOrder() {
-    // Limpiar el formulario
-    this.newOrder = {
-      material: '',
-      cantidad: null,
-      observacion: '',
-      fechaSolicitada: '',
-      paqueteTrabajo: '',
-      tecnico: '',
-    };
-
-    // Vaciar la lista de pedidos
-    this.pedidosList = [];
-
-    // Ocultar el formulario
-    this.showForm = false;
-  }
+  // Control to show/hide the stepper
+  public showStepper: boolean = false;
 
   constructor(
     private apiService: ApiService,
-    private activeSheetService: ActiveSheetService
+    private activeSheetService: ActiveSheetService,
+    private _formBuilder: FormBuilder
   ) {}
 
   ngOnInit() {
-    const activeSheetId = sessionStorage.getItem('activeSheetId');
     this.getDeliveries();
-    this.getMaterials();
     this.getTecnicos();
+
+    this.firstFormGroup = this._formBuilder.group({
+      material: ['', Validators.required],
+      cantidad: [null, [Validators.required, Validators.min(1)]],
+      observacion: [''],
+    });
+    this.secondFormGroup = this._formBuilder.group({
+      fechaSolicitada: ['', Validators.required],
+      paqueteTrabajo: ['', Validators.required],
+    });
+    this.thirdFormGroup = this._formBuilder.group({
+      tecnico: ['', Validators.required],
+    });
   }
 
   getDeliveries() {
@@ -150,24 +142,7 @@ export class DeliveriesComponent {
         this.rowData = response;
       },
       (error) => {
-        console.error('Error al obtener las ordenes:', error);
-      }
-    );
-  }
-
-  getMaterials() {
-    this.apiService.getMaterials().subscribe(
-      (response: any[]) => {
-        this.rowDataMaterials = response;
-        this.materials = response
-          .filter((item) => item.Material && item.Material.trim() !== '')
-          .map((item) => ({
-            name: item.Material,
-            value: item.id,
-          }));
-      },
-      (error) => {
-        console.error('Error al obtener los materiales:', error);
+        console.error('Error al obtener las órdenes:', error);
       }
     );
   }
@@ -184,55 +159,28 @@ export class DeliveriesComponent {
           }));
       },
       (error) => {
-        console.error('Error al obtener los tecnicos:', error);
-      }
-    );
-  }
-  
-  
-
-  removeOrder(index: number) {
-    this.pedidosList.splice(index, 1);
-  }
-
-  ngAfterViewInit() {
-    //console.log(this.myGrid.api);
-  }
-
-  submitOrders() {
-    const payloads = this.pedidosList.map((order) => ({
-      
-      unuse: '',
-      material: order.material,
-      quantity: order.cantidad,
-      comment: order.observacion,
-      soldate: order.fechaSolicitada,
-      packagework: order.paqueteTrabajo,
-      tecnico: order.tecnico,
-      status: 'Pendiente',
-    }));
-  
-    const requests = payloads.map((payload) => this.apiService.addOrder(payload));
-  
-    forkJoin(requests).subscribe(
-      (responses) => {
-        console.log('All orders added successfully:', responses);
-        //this.getOrders();
-        this.pedidosList = [];
-        this.showForm = false;
-      },
-      (error) => {
-        console.error('Error adding orders:', error);
+        console.error('Error al obtener los técnicos:', error);
       }
     );
   }
 
-  toggleForm() {
-    this.showForm = !this.showForm;
+  toggleStepper() {
+    this.showStepper = !this.showStepper;
   }
 
   onSubmit() {
-    console.log('Nuevo pedido:', this.newOrder);
-    this.showForm = false; 
+    const newOrder = {
+      ...this.firstFormGroup.value,
+      ...this.secondFormGroup.value,
+      ...this.thirdFormGroup.value,
+    };
+    console.log('Nuevo pedido:', newOrder);
+    // Aquí puedes agregar la lógica para enviar el nuevo pedido al backend
+    // Después de enviar, puedes resetear los formularios si lo deseas
+    this.firstFormGroup.reset();
+    this.secondFormGroup.reset();
+    this.thirdFormGroup.reset();
+    // Opción: Ocultar el stepper después de enviar el formulario
+    this.showStepper = false;
   }
 }

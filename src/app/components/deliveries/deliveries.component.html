@@ -1,101 +1,132 @@
 <div class="container-fluid mt-4">
-  <div class="header">
+    <div class="header">
       <h1>ENTREGAS</h1>
-      <button (click)="toggleForm()" class="btn create-button">+ Crear</button>
-  </div>
-  <div *ngIf="showForm" class="form-and-list-container">
-      <!-- Formulario de Pedido -->
-      <div class="order-form">
-          <form (ngSubmit)="addOrder()">
-              <h3>Nuevo Pedido</h3>
-              <div class="form-row">
-                  <div class="form-group">
-                      <label for="material">Material Solicitado</label>
-                      <select [(ngModel)]="newOrder.material" name="material" id="material" required>
-                          <option *ngFor="let material of materials" [value]="material.name">
-                              {{ material.name }}
-                          </option>
-                      </select>
-                  </div>
-                  <div class="form-group">
-                      <label for="cantidad">Cantidad</label>
-                      <input type="number" [(ngModel)]="newOrder.cantidad" name="cantidad" id="cantidad" required>
-                  </div>
+      <button class="gestionar-button" (click)="toggleStepper()">+ Gestionar</button>
+    </div>
+  
+    <!-- Conditionally display the form container -->
+    <div class="form-container" *ngIf="showStepper">
+      <mat-horizontal-stepper [linear]="isLinear" #stepper>
+        <mat-step [stepControl]="firstFormGroup">
+          <form [formGroup]="firstFormGroup">
+            <ng-template matStepLabel>Información del Material</ng-template>
+            <div class="form-row">
+              <div class="form-group">
+                <mat-form-field appearance="fill">
+                  <mat-label>Material</mat-label>
+                  <mat-select formControlName="material">
+                    <mat-option *ngFor="let material of materials" [value]="material.value">
+                      {{ material.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="firstFormGroup.get('material')?.hasError('required')">
+                    El material es requerido
+                  </mat-error>
+                </mat-form-field>
               </div>
-              <div class="form-row">
-                  <div class="form-group">
-                      <label for="observacion">Observación</label>
-                      <input type="text" [(ngModel)]="newOrder.observacion" name="observacion" id="observacion">
-                  </div>
-                  <div class="form-group">
-                      <label for="fechaSolicitada">Fecha Solicitada</label>
-                      <input type="date" [(ngModel)]="newOrder.fechaSolicitada" name="fechaSolicitada"
-                          id="fechaSolicitada" required>
-                  </div>
+  
+              <div class="form-group">
+                <mat-form-field appearance="fill">
+                  <mat-label>Cantidad</mat-label>
+                  <input matInput formControlName="cantidad" type="number" min="1" />
+                  <mat-error *ngIf="firstFormGroup.get('cantidad')?.hasError('required')">
+                    La cantidad es requerida
+                  </mat-error>
+                  <mat-error *ngIf="firstFormGroup.get('cantidad')?.hasError('min')">
+                    La cantidad debe ser mayor a cero
+                  </mat-error>
+                </mat-form-field>
               </div>
-              <div class="form-row">
-                  <div class="form-group">
-                      <label for="paqueteTrabajo">Paquete de Trabajo</label>
-                      <input type="text" [(ngModel)]="newOrder.paqueteTrabajo" name="paqueteTrabajo"
-                          id="paqueteTrabajo">
-                  </div>
-                  <div class="form-group">
-                      <label for="tecnico">Técnico Responsable</label>
-                      <select [(ngModel)]="newOrder.tecnico" name="tecnico" id="tecnico" required>
-                          <option *ngFor="let tecnico of tecnicos" [value]="tecnico.name">
-                              {{ tecnico.name }}
-                          </option>
-                      </select>
-                  </div>
+  
+              <div class="form-group">
+                <mat-form-field appearance="fill">
+                  <mat-label>Observación</mat-label>
+                  <input matInput formControlName="observacion" />
+                </mat-form-field>
               </div>
-              <div class="form-buttons">
-                  <button type="submit" class="btn submit-button">Agregar Pedido</button>
-                  <button type="button" (click)="cancelOrder()" class="btn cancel-button">Cancelar</button>
-              </div>
+            </div>
+  
+            <div class="button-container">
+              <button mat-button matStepperNext [disabled]="firstFormGroup.invalid">Siguiente</button>
+            </div>
           </form>
-      </div>
-
-      <!-- Lista de Pedidos -->
-      <div class="card">
-          <h3>Pedidos en Lista</h3>
-          <table class="table table-striped">
-              <thead>
-                  <tr>
-                      <th>Material</th>
-                      <th>Cantidad</th>
-                      <th>Observación</th>
-                      <th>Fecha Solicitada</th>
-                      <th>Paquete de Trabajo</th>
-                      <th>Técnico</th>
-                      <th>Acciones</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr *ngFor="let pedido of pedidosList; let i = index">
-                      <td>{{ pedido.material }}</td>
-                      <td>{{ pedido.cantidad }}</td>
-                      <td>{{ pedido.observacion }}</td>
-                      <td>{{ pedido.fechaSolicitada }}</td>
-                      <td>{{ pedido.paqueteTrabajo }}</td>
-                      <td>{{ pedido.tecnico }}</td>
-                      <td>
-                          <button (click)="removeOrder(i)" class="btn btn-danger">Eliminar</button>
-                      </td>
-                  </tr>
-              </tbody>
-          </table>
-          <div class="button-container">
-              <button (click)="submitOrders()" class="btn send-button">Enviar Pedidos</button>
-          </div>
-      </div>
-  </div>
-
-  <!-- Grid de Entregas -->
-  <div class="grid-container">
-      <ag-grid-angular #myGrid style="width: 100%; height: 100%;" [rowData]="rowData" [columnDefs]="columnDefs"
-          [defaultColDef]="defaultColDef" [rowSelection]="rowSelection" [pagination]="true"
-          [paginationPageSize]="paginationPageSize" [paginationPageSizeSelector]="paginationPageSizeSelector"
-          [enableCellTextSelection]="true">
+        </mat-step>
+  
+        <mat-step [stepControl]="secondFormGroup">
+          <form [formGroup]="secondFormGroup">
+            <ng-template matStepLabel>Información Adicional</ng-template>
+            <div class="form-row">
+              <div class="form-group">
+                <mat-form-field appearance="fill">
+                  <mat-label>Fecha Solicitada</mat-label>
+                  <input matInput formControlName="fechaSolicitada" [matDatepicker]="picker" />
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  <mat-error *ngIf="secondFormGroup.get('fechaSolicitada')?.hasError('required')">
+                    La fecha es requerida
+                  </mat-error>
+                </mat-form-field>
+              </div>
+  
+              <div class="form-group">
+                <mat-form-field appearance="fill">
+                  <mat-label>Paquete de Trabajo</mat-label>
+                  <input matInput formControlName="paqueteTrabajo" />
+                  <mat-error *ngIf="secondFormGroup.get('paqueteTrabajo')?.hasError('required')">
+                    El paquete de trabajo es requerido
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+  
+            <div class="button-container">
+              <button mat-button matStepperPrevious>Anterior</button>
+              <button mat-button matStepperNext [disabled]="secondFormGroup.invalid">Siguiente</button>
+            </div>
+          </form>
+        </mat-step>
+  
+        <mat-step [stepControl]="thirdFormGroup">
+          <form [formGroup]="thirdFormGroup">
+            <ng-template matStepLabel>Asignación de Técnico</ng-template>
+            <div class="form-row">
+              <div class="form-group">
+                <mat-form-field appearance="fill">
+                  <mat-label>Técnico Responsable</mat-label>
+                  <mat-select formControlName="tecnico">
+                    <mat-option *ngFor="let tecnico of tecnicos" [value]="tecnico.value">
+                      {{ tecnico.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="thirdFormGroup.get('tecnico')?.hasError('required')">
+                    El técnico es requerido
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+  
+            <div class="button-container">
+              <button mat-button matStepperPrevious>Anterior</button>
+              <button mat-button (click)="onSubmit()" [disabled]="thirdFormGroup.invalid">Finalizar</button>
+            </div>
+          </form>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </div>
+  
+    <div class="grid-container">
+      <ag-grid-angular
+        #myGrid
+        style="width: 100%; height: 100%;"
+        [rowData]="rowData"
+        [columnDefs]="columnDefs"
+        [defaultColDef]="defaultColDef"
+        [rowSelection]="rowSelection"
+        [pagination]="true"
+        [paginationPageSize]="paginationPageSize"
+        [paginationPageSizeSelector]="paginationPageSizeSelector"
+        [enableCellTextSelection]="true"
+      >
       </ag-grid-angular>
+    </div>
   </div>
-</div>
