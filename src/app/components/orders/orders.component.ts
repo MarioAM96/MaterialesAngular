@@ -70,7 +70,7 @@ export class OrdersComponent implements OnInit, AfterViewInit {
       headerName: 'Cantidad Entregada',
       type: 'number',
     },
-    { field: 'udf', headerName: 'UDF', type: 'text' },
+    // { field: 'udf', headerName: 'UDF', type: 'text' },
   ];
 
   public defaultColDef: ColDef = {

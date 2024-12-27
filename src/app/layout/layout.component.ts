@@ -65,6 +65,7 @@ import { SidebarService } from '../services/sidebar.service';
         border: 1px solid #ccc;
         border-radius: 8px;
         background-color: #fff;
+        //background-color: #CAD593;
         padding: 20px;
         margin: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

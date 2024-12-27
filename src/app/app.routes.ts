@@ -54,7 +54,7 @@ export const routes: Routes = [
         data: { expectedRoles: ['Administrador','Técnico'] } 
       },
       { 
-        path: 'delivieries', 
+        path: 'deliveries', 
         component: DeliveriesComponent, 
         canActivate: [AuthGuard, RoleGuard], 
         data: { expectedRoles: ['Administrador','Técnico'] } 

@@ -2,14 +2,17 @@ import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, ModuleRegistry } from 'ag-grid-community';
 import { ApiService } from '../../services/api.service';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { ActiveSheetService } from '../../services/activesheet.service';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { forkJoin } from 'rxjs';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-deliveries',
-  imports: [AgGridAngular, HttpClientModule],
+  imports: [AgGridAngular, HttpClientModule, FormsModule, CommonModule],
   templateUrl: './deliveries.component.html',
   styleUrl: './deliveries.component.scss',
   providers: [ApiService],
@@ -18,7 +21,8 @@ export class DeliveriesComponent {
   @ViewChild('myGrid') myGrid!: AgGridAngular;
 
   public rowData: any[] | null = null;
-  private checkboxStates: { [key: string]: boolean } = {};
+  public rowDataMaterials: any[] | null = null;
+  public rowDataTecnicos: any[] | null = null;
 
   public columnDefs: ColDef[] = [
     { field: 'id', headerName: 'ID', type: 'text' },
@@ -65,8 +69,7 @@ export class DeliveriesComponent {
       field: 'Cantidad Entregada',
       headerName: 'Cantidad Entregada',
       type: 'number',
-    },
-    { field: 'udf', headerName: 'UDF', type: 'text' },
+    }
   ];
 
   public defaultColDef: ColDef = {
@@ -78,6 +81,57 @@ export class DeliveriesComponent {
   public paginationPageSize = 10;
   public paginationPageSizeSelector: number[] = [10, 25, 50, 100, 200];
 
+  public showForm = false;
+  newOrder = {
+    material: '',
+    cantidad: null,
+    observacion: '',
+    fechaSolicitada: '',
+    paqueteTrabajo: '',
+    tecnico: '',
+  };
+  public materials: { name: string; value: string }[] = [];
+  public tecnicos: { name: string; value: string }[] = [];
+
+  pedidosList: {
+    material: string;
+    cantidad: number | null;
+    observacion: string;
+    fechaSolicitada: string;
+    paqueteTrabajo: string;
+    tecnico: string;
+  }[] = [];
+
+  addOrder() {
+    this.pedidosList.push({ ...this.newOrder });
+    this.newOrder = {
+      material: '',
+      cantidad: null,
+      observacion: '',
+      fechaSolicitada: '',
+      paqueteTrabajo: '',
+      tecnico: '',
+    };
+  }
+
+  cancelOrder() {
+    // Limpiar el formulario
+    this.newOrder = {
+      material: '',
+      cantidad: null,
+      observacion: '',
+      fechaSolicitada: '',
+      paqueteTrabajo: '',
+      tecnico: '',
+    };
+
+    // Vaciar la lista de pedidos
+    this.pedidosList = [];
+
+    // Ocultar el formulario
+    this.showForm = false;
+  }
+
   constructor(
     private apiService: ApiService,
     private activeSheetService: ActiveSheetService
@@ -85,22 +139,100 @@ export class DeliveriesComponent {
 
   ngOnInit() {
     const activeSheetId = sessionStorage.getItem('activeSheetId');
+    this.getDeliveries();
+    this.getMaterials();
+    this.getTecnicos();
+  }
+
+  getDeliveries() {
     this.apiService.getDeliveries().subscribe(
       (response) => {
         this.rowData = response;
-        if (activeSheetId) {
-          this.rowData?.forEach((row) => {
-            this.checkboxStates[row.id] = row.sheetid === activeSheetId;
-          });
-        }
       },
       (error) => {
-        console.error('Error al obtener los proyectos:', error);
+        console.error('Error al obtener las ordenes:', error);
       }
     );
   }
 
+  getMaterials() {
+    this.apiService.getMaterials().subscribe(
+      (response: any[]) => {
+        this.rowDataMaterials = response;
+        this.materials = response
+          .filter((item) => item.Material && item.Material.trim() !== '')
+          .map((item) => ({
+            name: item.Material,
+            value: item.id,
+          }));
+      },
+      (error) => {
+        console.error('Error al obtener los materiales:', error);
+      }
+    );
+  }
+
+  getTecnicos() {
+    this.apiService.getUsers().subscribe(
+      (response: any[]) => {
+        this.rowDataTecnicos = response;
+        this.tecnicos = response
+          .filter((item) => item.Nombre && item.Nombre.trim() !== '')
+          .map((item) => ({
+            name: item.Nombre,
+            value: item.id,
+          }));
+      },
+      (error) => {
+        console.error('Error al obtener los tecnicos:', error);
+      }
+    );
+  }
+  
+  
+
+  removeOrder(index: number) {
+    this.pedidosList.splice(index, 1);
+  }
+
   ngAfterViewInit() {
-    console.log(this.myGrid.api);
+    //console.log(this.myGrid.api);
+  }
+
+  submitOrders() {
+    const payloads = this.pedidosList.map((order) => ({
+      
+      unuse: '',
+      material: order.material,
+      quantity: order.cantidad,
+      comment: order.observacion,
+      soldate: order.fechaSolicitada,
+      packagework: order.paqueteTrabajo,
+      tecnico: order.tecnico,
+      status: 'Pendiente',
+    }));
+  
+    const requests = payloads.map((payload) => this.apiService.addOrder(payload));
+  
+    forkJoin(requests).subscribe(
+      (responses) => {
+        console.log('All orders added successfully:', responses);
+        //this.getOrders();
+        this.pedidosList = [];
+        this.showForm = false;
+      },
+      (error) => {
+        console.error('Error adding orders:', error);
+      }
+    );
+  }
+
+  toggleForm() {
+    this.showForm = !this.showForm;
+  }
+
+  onSubmit() {
+    console.log('Nuevo pedido:', this.newOrder);
+    this.showForm = false; 
   }
 }

@@ -1,15 +1,101 @@
-<div style="text-align: left; font-size: 30px; font-weight: bold; margin-bottom: 10px;">
-    ENTREGAS
+<div class="container-fluid mt-4">
+  <div class="header">
+      <h1>ENTREGAS</h1>
+      <button (click)="toggleForm()" class="btn create-button">+ Crear</button>
   </div>
-  <ag-grid-angular
-    #myGrid
-    style="width: 100%; height: 100%;"
-    [rowData]="rowData"
-    [columnDefs]="columnDefs"
-    [defaultColDef]="defaultColDef"
-    [rowSelection]="rowSelection"
-    [pagination]="true"
-    [paginationPageSize]="paginationPageSize"
-    [paginationPageSizeSelector]="paginationPageSizeSelector"
-    [enableCellTextSelection]="true"
-  ></ag-grid-angular>
+  <div *ngIf="showForm" class="form-and-list-container">
+      <!-- Formulario de Pedido -->
+      <div class="order-form">
+          <form (ngSubmit)="addOrder()">
+              <h3>Nuevo Pedido</h3>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="material">Material Solicitado</label>
+                      <select [(ngModel)]="newOrder.material" name="material" id="material" required>
+                          <option *ngFor="let material of materials" [value]="material.name">
+                              {{ material.name }}
+                          </option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <label for="cantidad">Cantidad</label>
+                      <input type="number" [(ngModel)]="newOrder.cantidad" name="cantidad" id="cantidad" required>
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="observacion">Observación</label>
+                      <input type="text" [(ngModel)]="newOrder.observacion" name="observacion" id="observacion">
+                  </div>
+                  <div class="form-group">
+                      <label for="fechaSolicitada">Fecha Solicitada</label>
+                      <input type="date" [(ngModel)]="newOrder.fechaSolicitada" name="fechaSolicitada"
+                          id="fechaSolicitada" required>
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="paqueteTrabajo">Paquete de Trabajo</label>
+                      <input type="text" [(ngModel)]="newOrder.paqueteTrabajo" name="paqueteTrabajo"
+                          id="paqueteTrabajo">
+                  </div>
+                  <div class="form-group">
+                      <label for="tecnico">Técnico Responsable</label>
+                      <select [(ngModel)]="newOrder.tecnico" name="tecnico" id="tecnico" required>
+                          <option *ngFor="let tecnico of tecnicos" [value]="tecnico.name">
+                              {{ tecnico.name }}
+                          </option>
+                      </select>
+                  </div>
+              </div>
+              <div class="form-buttons">
+                  <button type="submit" class="btn submit-button">Agregar Pedido</button>
+                  <button type="button" (click)="cancelOrder()" class="btn cancel-button">Cancelar</button>
+              </div>
+          </form>
+      </div>
+
+      <!-- Lista de Pedidos -->
+      <div class="card">
+          <h3>Pedidos en Lista</h3>
+          <table class="table table-striped">
+              <thead>
+                  <tr>
+                      <th>Material</th>
+                      <th>Cantidad</th>
+                      <th>Observación</th>
+                      <th>Fecha Solicitada</th>
+                      <th>Paquete de Trabajo</th>
+                      <th>Técnico</th>
+                      <th>Acciones</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let pedido of pedidosList; let i = index">
+                      <td>{{ pedido.material }}</td>
+                      <td>{{ pedido.cantidad }}</td>
+                      <td>{{ pedido.observacion }}</td>
+                      <td>{{ pedido.fechaSolicitada }}</td>
+                      <td>{{ pedido.paqueteTrabajo }}</td>
+                      <td>{{ pedido.tecnico }}</td>
+                      <td>
+                          <button (click)="removeOrder(i)" class="btn btn-danger">Eliminar</button>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+          <div class="button-container">
+              <button (click)="submitOrders()" class="btn send-button">Enviar Pedidos</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- Grid de Entregas -->
+  <div class="grid-container">
+      <ag-grid-angular #myGrid style="width: 100%; height: 100%;" [rowData]="rowData" [columnDefs]="columnDefs"
+          [defaultColDef]="defaultColDef" [rowSelection]="rowSelection" [pagination]="true"
+          [paginationPageSize]="paginationPageSize" [paginationPageSizeSelector]="paginationPageSizeSelector"
+          [enableCellTextSelection]="true">
+      </ag-grid-angular>
+  </div>
+</div>
