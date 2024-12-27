@@ -1,24 +1,57 @@
-.sidebar {
-    height: 100vh;
-    background-color: #000; /* Fondo negro */
-    color: #fff; /* Texto blanco */
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-    padding-top: 20px;
-    overflow: hidden; /* Ocultar contenido desbordado */
-    transition: flex-basis 0.3s ease, background-color 0.3s ease; /* Ajuste de animación */
-    display: inline-block; /* Asegurar que se ajuste al contenido */
-
-    &.collapsed {
-        flex-basis: 0; /* Espacio colapsado cuando está oculto */
-    }
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
 }
-  
+
+app-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+app-sidebar {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  width: 250px;
+  height: calc(100% - 56px);
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+
+app-sidebar.collapsed {
+  width: 80px;
+}
+
+.content {
+  margin-top: 56px;
+  margin-left: 250px;
+  height: calc(100% - 56px);
+  overflow: hidden;
+  transition: margin-left 0.3s ease;
+}
+
+.content.collapsed {
+  margin-left: 80px;
+}
+
+.content-container {
+  border: 1px solid #e0e0e0; // Color de borde más suave
+  border-radius: 8px;
+  background-color: #0c0b26; // Fondo ligeramente gris
+  padding: 20px;
+  margin: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); // Sombra suave
+  height: calc(100% - 20px);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
   .content {
-    flex-grow: 1;
-    padding: 20px;
-    transition: margin-left 0.3s ease;
+    margin-left: 0;
   }
-  
-  .content.collapsed {
-    margin-left: 0; /* Ajusta el margen cuando el sidebar está colapsado */
-  }
+}

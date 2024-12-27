@@ -1,50 +1,64 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
   <div class="sidebar-header">
     <div class="user-info">
+      <fa-icon [icon]="['fas', 'user']" class="icon"></fa-icon>
       <span class="user-text" *ngIf="!isCollapsed">{{ userRol }}</span>
     </div>
   </div>
   
   <ul class="list-unstyled">
+    <!-- Dashboard -->
     <li *ngIf="userRol === 'Administrador' || userRol === 'Técnico'">
       <a routerLink="/dashboard" class="sidebar-link">
-        <i class="icon">🏠</i>
+        <fa-icon [icon]="['fas', 'home']" class="icon"></fa-icon>
         <span class="link-text" *ngIf="!isCollapsed">Dashboard</span>
       </a>
     </li>
+
+    <!-- Pedidos -->
     <li *ngIf="userRol === 'Administrador' || userRol === 'Técnico'">
       <a routerLink="/orders" class="sidebar-link">
-        <i class="icon">🧳</i>
+        <fa-icon [icon]="['fas', 'clipboard-list']" class="icon"></fa-icon>
         <span class="link-text" *ngIf="!isCollapsed">Pedidos</span>
       </a>
     </li>
+
+    <!-- Entregas -->
     <li *ngIf="userRol === 'Administrador' || userRol === 'Técnico'">
-      <a routerLink="/delivieries" class="sidebar-link">
-        <i class="icon">✅</i>
+      <a routerLink="/deliveries" class="sidebar-link">
+        <fa-icon [icon]="['fas', 'truck']" class="icon"></fa-icon>
         <span class="link-text" *ngIf="!isCollapsed">Entregas</span>
       </a>
     </li>
+
+    <!-- Configuraciones -->
     <li *ngIf="userRol === 'Administrador'">
       <a routerLink="/settings" class="sidebar-link">
-        <i class="icon">⚙️</i>
-        <span class="link-text" *ngIf="!isCollapsed">Settings</span>
+        <fa-icon [icon]="['fas', 'cog']" class="icon"></fa-icon>
+        <span class="link-text" *ngIf="!isCollapsed">Configuraciones</span>
       </a>
     </li>
+
+    <!-- Proyectos -->
     <li *ngIf="userRol === 'Administrador' || userRol === 'Técnico'">
       <a routerLink="/proyectos" class="sidebar-link">
-        <i class="icon">🔖</i>
+        <fa-icon [icon]="['fas', 'tasks']" class="icon"></fa-icon>
         <span class="link-text" *ngIf="!isCollapsed">Proyectos</span>
       </a>
     </li>
+
+    <!-- Usuarios -->
     <li *ngIf="userRol === 'Administrador'">
       <a routerLink="/usuarios" class="sidebar-link">
-        <i class="icon">👥</i>
+        <fa-icon [icon]="['fas', 'users']" class="icon"></fa-icon>
         <span class="link-text" *ngIf="!isCollapsed">Usuarios</span>
       </a>
     </li>
+
+    <!-- Materiales -->
     <li *ngIf="userRol === 'Administrador' || userRol === 'Técnico'">
       <a routerLink="/materiales" class="sidebar-link">
-        <i class="icon">📦</i>
+        <fa-icon [icon]="['fas', 'cubes']" class="icon"></fa-icon>
         <span class="link-text" *ngIf="!isCollapsed">Materiales</span>
       </a>
     </li>

@@ -1,9 +1,9 @@
 .sidebar {
   width: 250px;
   height: 100vh;
-  background-color: #000;
-  color: #fff;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  background-color: #f0f0f0; // Fondo gris claro
+  color: #333; // Texto gris oscuro
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); // Sombra suave
   padding-top: 20px;
   transition: width 0.3s ease, transform 0.3s ease;
   
@@ -25,32 +25,20 @@
   .sidebar-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid #ccc; // Línea divisoria gris claro
     
     .user-info {
       display: flex;
       align-items: center;
       font-size: 14px;
       font-weight: 600;
+      color: #333; // Texto gris oscuro
 
-      .user-icon {
+      .icon {
         margin-right: 10px;
         font-size: 18px;
-      }
-    }
-
-    button {
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 24px;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-      
-      &:hover {
-        transform: rotate(90deg);
+        color: #333; // Ícono gris oscuro
       }
     }
   }
@@ -67,7 +55,7 @@
         display: flex;
         align-items: center;
         padding: 12px 20px;
-        color: #fff;
+        color: #333; // Texto gris oscuro
         text-decoration: none;
         font-size: 15px;
         font-weight: 500;
@@ -75,14 +63,20 @@
         transition: all 0.3s ease;
         border: 1px solid transparent;
 
+        .icon {
+          margin-right: 10px;
+          font-size: 18px;
+          color: #333; // Ícono gris oscuro
+        }
+
         &:hover {
-          background-color: rgba(255, 255, 255, 0.1);
-          border-color: rgba(255, 255, 255, 0.2);
+          background-color: #e0e0e0; // Fondo gris claro al pasar el mouse
+          border-color: #ccc;
         }
 
         &.active {
-          background-color: rgba(255, 255, 255, 0.2);
-          border-color: rgba(255, 255, 255, 0.4);
+          background-color: #d0d0d0; // Fondo gris medio al estar activo
+          border-color: #bbb;
         }
       }
     }
