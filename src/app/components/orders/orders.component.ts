@@ -4,14 +4,15 @@ import { AllCommunityModule, ColDef, ModuleRegistry } from 'ag-grid-community';
 import { ApiService } from '../../services/api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ActiveSheetService } from '../../services/activesheet.service';
-import { FormsModule } from '@angular/forms'; 
-import { CommonModule } from '@angular/common'; 
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { forkJoin } from 'rxjs';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-orders',
-  imports: [AgGridAngular, HttpClientModule,FormsModule,CommonModule],
+  imports: [AgGridAngular, HttpClientModule, FormsModule, CommonModule],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.scss',
   providers: [ApiService],
@@ -20,11 +21,16 @@ export class OrdersComponent implements OnInit, AfterViewInit {
   @ViewChild('myGrid') myGrid!: AgGridAngular;
 
   public rowData: any[] | null = null;
-  private checkboxStates: { [key: string]: boolean } = {};
+  public rowDataMaterials: any[] | null = null;
+  public rowDataTecnicos: any[] | null = null;
 
   public columnDefs: ColDef[] = [
     { field: 'id', headerName: 'ID', type: 'text' },
-    { field: 'Material Solicitado', headerName: 'Material Solicitado', type: 'text' },
+    {
+      field: 'Material Solicitado',
+      headerName: 'Material Solicitado',
+      type: 'text',
+    },
     { field: 'Cantidad', headerName: 'Cantidad', type: 'number' },
     { field: 'Observación', headerName: 'Observación', type: 'text' },
     {
@@ -36,8 +42,16 @@ export class OrdersComponent implements OnInit, AfterViewInit {
         return date.toLocaleDateString();
       },
     },
-    { field: 'Paquete de Trabajo', headerName: 'Paquete de Trabajo', type: 'text' },
-    { field: 'Técnico Responsable', headerName: 'Técnico Responsable', type: 'text' },
+    {
+      field: 'Paquete de Trabajo',
+      headerName: 'Paquete de Trabajo',
+      type: 'text',
+    },
+    {
+      field: 'Técnico Responsable',
+      headerName: 'Técnico Responsable',
+      type: 'text',
+    },
     { field: 'Status Entrega', headerName: 'Status Entrega', type: 'text' },
     { field: 'Bodega', headerName: 'Bodega', type: 'number' },
     { field: 'Código', headerName: 'Código', type: 'number' },
@@ -51,8 +65,12 @@ export class OrdersComponent implements OnInit, AfterViewInit {
         return date.toLocaleDateString();
       },
     },
-    { field: 'Cantidad Entregada', headerName: 'Cantidad Entregada', type: 'number' },
-    { field: 'udf', headerName: 'UDF', type: 'text' }
+    {
+      field: 'Cantidad Entregada',
+      headerName: 'Cantidad Entregada',
+      type: 'number',
+    },
+    { field: 'udf', headerName: 'UDF', type: 'text' },
   ];
 
   public defaultColDef: ColDef = {
@@ -71,11 +89,19 @@ export class OrdersComponent implements OnInit, AfterViewInit {
     observacion: '',
     fechaSolicitada: '',
     paqueteTrabajo: '',
-    tecnico: ''
+    tecnico: '',
   };
-  public materials = ['Material 1', 'Material 2'];
-  public tecnicos = ['Técnico 1', 'Técnico 2'];
-  pedidosList: { material: string; cantidad: number | null; observacion: string; fechaSolicitada: string; paqueteTrabajo: string; tecnico: string; }[] = [];
+  public materials: { name: string; value: string }[] = [];
+  public tecnicos: { name: string; value: string }[] = [];
+
+  pedidosList: {
+    material: string;
+    cantidad: number | null;
+    observacion: string;
+    fechaSolicitada: string;
+    paqueteTrabajo: string;
+    tecnico: string;
+  }[] = [];
 
   addOrder() {
     this.pedidosList.push({ ...this.newOrder });
@@ -85,19 +111,19 @@ export class OrdersComponent implements OnInit, AfterViewInit {
       observacion: '',
       fechaSolicitada: '',
       paqueteTrabajo: '',
-      tecnico: ''
+      tecnico: '',
     };
   }
-  
+
   cancelOrder() {
     // Limpiar el formulario
     this.newOrder = {
-        material: '',
-        cantidad: null,
-        observacion: '',
-        fechaSolicitada: '',
-        paqueteTrabajo: '',
-        tecnico: ''
+      material: '',
+      cantidad: null,
+      observacion: '',
+      fechaSolicitada: '',
+      paqueteTrabajo: '',
+      tecnico: '',
     };
 
     // Vaciar la lista de pedidos
@@ -105,7 +131,7 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 
     // Ocultar el formulario
     this.showForm = false;
-}
+  }
 
   constructor(
     private apiService: ApiService,
@@ -114,32 +140,92 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     const activeSheetId = sessionStorage.getItem('activeSheetId');
+    this.getOrders();
+    this.getMaterials();
+    this.getTecnicos();
+  }
+
+  getOrders() {
     this.apiService.getOrders().subscribe(
       (response) => {
         this.rowData = response;
-        if (activeSheetId) {
-          this.rowData?.forEach((row) => {
-            this.checkboxStates[row.id] = row.sheetid === activeSheetId;
-          });
-        }
       },
       (error) => {
-        console.error('Error al obtener los proyectos:', error);
+        console.error('Error al obtener las ordenes:', error);
       }
     );
   }
+
+  getMaterials() {
+    this.apiService.getMaterials().subscribe(
+      (response: any[]) => {
+        this.rowDataMaterials = response;
+        this.materials = response
+          .filter((item) => item.Material && item.Material.trim() !== '')
+          .map((item) => ({
+            name: item.Material,
+            value: item.id,
+          }));
+      },
+      (error) => {
+        console.error('Error al obtener los materiales:', error);
+      }
+    );
+  }
+
+  getTecnicos() {
+    this.apiService.getUsers().subscribe(
+      (response: any[]) => {
+        this.rowDataTecnicos = response;
+        this.tecnicos = response
+          .filter((item) => item.Nombre && item.Nombre.trim() !== '')
+          .map((item) => ({
+            name: item.Nombre,
+            value: item.id,
+          }));
+      },
+      (error) => {
+        console.error('Error al obtener los tecnicos:', error);
+      }
+    );
+  }
+  
+  
+
   removeOrder(index: number) {
     this.pedidosList.splice(index, 1);
-}
+  }
 
   ngAfterViewInit() {
     //console.log(this.myGrid.api);
   }
 
   submitOrders() {
-    console.log('Pedidos a enviar:', this.pedidosList);
-    // Aquí puedes añadir la lógica para enviar los pedidos
-    this.pedidosList = []; // Limpiar la lista después de enviar
+    const payloads = this.pedidosList.map((order) => ({
+      
+      unuse: '',
+      material: order.material,
+      quantity: order.cantidad,
+      comment: order.observacion,
+      soldate: order.fechaSolicitada,
+      packagework: order.paqueteTrabajo,
+      tecnico: order.tecnico,
+      status: 'Pendiente',
+    }));
+  
+    const requests = payloads.map((payload) => this.apiService.addOrder(payload));
+  
+    forkJoin(requests).subscribe(
+      (responses) => {
+        console.log('All orders added successfully:', responses);
+        this.getOrders();
+        this.pedidosList = [];
+        this.showForm = false;
+      },
+      (error) => {
+        console.error('Error adding orders:', error);
+      }
+    );
   }
 
   toggleForm() {
@@ -148,7 +234,6 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 
   onSubmit() {
     console.log('Nuevo pedido:', this.newOrder);
-    // Aquí puedes agregar la lógica para enviar el nuevo pedido al servidor
-    this.showForm = false; // Cierra el formulario después de enviar
+    this.showForm = false; 
   }
 }

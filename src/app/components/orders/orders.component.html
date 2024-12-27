@@ -1,53 +1,57 @@
 <div class="container-fluid mt-4">
     <div class="header">
         <h1>PEDIDOS</h1>
-        <button (click)="toggleForm()" class="btn btn-primary mb-3 create-button">+ Crear</button>
+        <button (click)="toggleForm()" class="btn create-button">+ Crear</button>
     </div>
-    <div *ngIf="showForm" class="form-container">
+    <div *ngIf="showForm" class="form-and-list-container">
         <!-- Formulario de Pedido -->
         <div class="order-form">
             <form (ngSubmit)="addOrder()">
                 <h3>Nuevo Pedido</h3>
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group">
                         <label for="material">Material Solicitado</label>
-                        <select [(ngModel)]="newOrder.material" name="material" class="form-control" id="material">
-                            <option *ngFor="let material of materials" [value]="material">{{material}}</option>
+                        <select [(ngModel)]="newOrder.material" name="material" id="material" required>
+                            <option *ngFor="let material of materials" [value]="material.name">
+                                {{ material.name }}
+                            </option>
                         </select>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group">
                         <label for="cantidad">Cantidad</label>
-                        <input type="number" [(ngModel)]="newOrder.cantidad" name="cantidad" class="form-control"
-                            id="cantidad" required>
+                        <input type="number" [(ngModel)]="newOrder.cantidad" name="cantidad" id="cantidad" required>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group">
                         <label for="observacion">Observación</label>
-                        <input type="text" [(ngModel)]="newOrder.observacion" name="observacion" class="form-control"
-                            id="observacion">
+                        <input type="text" [(ngModel)]="newOrder.observacion" name="observacion" id="observacion">
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group">
                         <label for="fechaSolicitada">Fecha Solicitada</label>
                         <input type="date" [(ngModel)]="newOrder.fechaSolicitada" name="fechaSolicitada"
-                            class="form-control" id="fechaSolicitada" required>
+                            id="fechaSolicitada" required>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group">
                         <label for="paqueteTrabajo">Paquete de Trabajo</label>
                         <input type="text" [(ngModel)]="newOrder.paqueteTrabajo" name="paqueteTrabajo"
-                            class="form-control" id="paqueteTrabajo">
+                            id="paqueteTrabajo">
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group">
                         <label for="tecnico">Técnico Responsable</label>
-                        <select [(ngModel)]="newOrder.tecnico" name="tecnico" class="form-control" id="tecnico">
-                            <option *ngFor="let tecnico of tecnicos" [value]="tecnico">{{tecnico}}</option>
+                        <select [(ngModel)]="newOrder.tecnico" name="tecnico" id="tecnico" required>
+                            <option *ngFor="let tecnico of tecnicos" [value]="tecnico.name">
+                                {{ tecnico.name }}
+                            </option>
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success submit-button">Agregar Pedido</button>
-                <button type="button" (click)="cancelOrder()" class="btn btn-secondary cancel-button">Cancelar</button>
+                <div class="form-buttons">
+                    <button type="submit" class="btn submit-button">Agregar Pedido</button>
+                    <button type="button" (click)="cancelOrder()" class="btn cancel-button">Cancelar</button>
+                </div>
             </form>
         </div>
 
@@ -63,7 +67,7 @@
                         <th>Fecha Solicitada</th>
                         <th>Paquete de Trabajo</th>
                         <th>Técnico</th>
-                        <th>Acciones</th> <!-- Nueva columna para acciones -->
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,13 +80,12 @@
                         <td>{{ pedido.tecnico }}</td>
                         <td>
                             <button (click)="removeOrder(i)" class="btn btn-danger">Eliminar</button>
-                            <!-- Botón de eliminación -->
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div class="button-container">
-                <button (click)="submitOrders()" class="btn btn-primary send-button">Enviar Pedidos</button>
+                <button (click)="submitOrders()" class="btn send-button">Enviar Pedidos</button>
             </div>
         </div>
     </div>
@@ -92,6 +95,7 @@
         <ag-grid-angular #myGrid style="width: 100%; height: 100%;" [rowData]="rowData" [columnDefs]="columnDefs"
             [defaultColDef]="defaultColDef" [rowSelection]="rowSelection" [pagination]="true"
             [paginationPageSize]="paginationPageSize" [paginationPageSizeSelector]="paginationPageSizeSelector"
-            [enableCellTextSelection]="true"></ag-grid-angular>
+            [enableCellTextSelection]="true">
+        </ag-grid-angular>
     </div>
 </div>

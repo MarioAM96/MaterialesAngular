@@ -20,6 +20,16 @@ export class ApiService {
     return this.http.post(this.apiUrl + 'insert-user/' + activeSheetId + '/' + activeSheetFilename, payload);
   }
 
+  addOrder(payload: any): Observable<any> {
+    console.log("PAY", payload);
+    const activeSheetId = this.activeSheetService.getActiveSheetId();
+    const activeSheetFilename = this.activeSheetService.getActiveSheetFilename();
+    if (!activeSheetId || !activeSheetFilename) {
+      throw new Error('Datos API GOOGLE no disponibles');
+    }
+    return this.http.post(this.apiUrl + 'get-data/' + activeSheetId + '/PEDIDOS/' + activeSheetFilename, payload);
+  }
+
   getUsers(): Observable<any> {
     const activeSheetId = this.activeSheetService.getActiveSheetId();
     const activeSheetFilename = this.activeSheetService.getActiveSheetFilename();
