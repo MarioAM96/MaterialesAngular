@@ -1,120 +1,64 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSelectModule } from '@angular/material/select';
-import {
-  DragDropModule,
-  CdkDragDrop,
-  moveItemInArray,
-} from '@angular/cdk/drag-drop';
-import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HttpClientModule } from '@angular/common/http';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
 import { Proyecto } from '../../models/proyectos.model';
-import { AddUsersComponent } from '../add-users/add-users.component';
-import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from '../../services/api.service';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { Product } from '../../models/product.model';
-import { ProductService } from '../../services/productservice';
-import { ImportsModule } from '../../imports';
-import { MessageService, SelectItem } from 'primeng/api';
-import { PrimeIcons } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-proyectos',
+  standalone: true,
   imports: [
     CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatCheckboxModule,
-    MatSelectModule,
-    DragDropModule,
     HttpClientModule,
-    FormsModule,
-    MatDialogModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    ImportsModule,
+    TableModule,
+    ButtonModule,
+    RippleModule,
   ],
   templateUrl: './proyectos.component.html',
   styleUrls: ['./proyectos.component.scss'],
-  providers: [ProductService, MessageService]
+  providers: [MessageService, ApiService],
 })
 export class ProyectosComponent implements OnInit {
-  products!: Product[];
+  unlockedProyects: Proyecto[] = [];
+  lockedProyects: Proyecto[] = [];
+  loading: boolean = false;
 
-  statuses!: SelectItem[];
-
-  clonedProducts: { [s: string]: Product } = {};
-
-  constructor(private productService: ProductService, private messageService: MessageService) {}
+  constructor(private apiService: ApiService, private messageService: MessageService) {}
 
   ngOnInit() {
-      this.productService.getProductsMini().then((data) => {
-          this.products = data;
-      });
-
-      this.statuses = [
-          { label: 'In Stock', value: 'INSTOCK' },
-          { label: 'Low Stock', value: 'LOWSTOCK' },
-          { label: 'Out of Stock', value: 'OUTOFSTOCK' }
-      ];
+    this.fetchProyects();
   }
 
-  onRowEditInit(product: Product) {
-      this.clonedProducts[product.id as string] = { ...product };
-  }
-
-  onRowEditSave(product: Product) {
-      if (product.price !== undefined && product.price > 0) {
-          delete this.clonedProducts[product.id as string];
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product is updated' });
-      } else {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Price' });
+  fetchProyects() {
+    this.loading = true;
+    this.apiService.getProyects().subscribe(
+      (response) => {
+        this.unlockedProyects = response;
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener los proyectos' });
       }
+    );
   }
 
-  onRowEditCancel(product: Product, index: number) {
-      this.products[index] = this.clonedProducts[product.id as string];
-      delete this.clonedProducts[product.id as string];
+  toggleLock(data: Proyecto, frozen: boolean, index: number) {
+    if (frozen) {
+      this.lockedProyects.splice(index, 1);
+      this.unlockedProyects.push(data);
+    } else {
+      this.unlockedProyects.splice(index, 1);
+      this.lockedProyects.push(data);
+    }
+    this.sortProyects();
   }
 
-  
-getSeverity(status: string): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' | undefined {
-
-  switch (status) {
-
-      case 'INSTOCK':
-
-          return 'success';
-
-      case 'LOWSTOCK':
-
-          return 'warn';
-
-      case 'OUTOFSTOCK':
-
-          return 'danger';
-
-      default:
-
-          return undefined;
-
+  sortProyects() {
+    this.unlockedProyects.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
   }
-
-}
-
 }

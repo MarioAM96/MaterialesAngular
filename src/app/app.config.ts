@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),  // Asegúrate de que las rutas sean del tipo correcto
     provideClientHydration(withEventReplay()), provideAnimationsAsync(), provideAnimationsAsync(),providePrimeNG({
       theme: {
-          preset: Aura,
+          preset: Lara,
           options: {
               prefix: 'p',
               darkModeSelector: false,
