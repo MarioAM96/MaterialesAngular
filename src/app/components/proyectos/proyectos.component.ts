@@ -28,6 +28,7 @@ import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/productservice';
 import { ImportsModule } from '../../imports';
 import { MessageService, SelectItem } from 'primeng/api';
+import { PrimeIcons } from 'primeng/api';
 
 @Component({
   selector: 'app-proyectos',
@@ -46,7 +47,7 @@ import { MessageService, SelectItem } from 'primeng/api';
     MatDialogModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    ImportsModule
+    ImportsModule,
   ],
   templateUrl: './proyectos.component.html',
   styleUrls: ['./proyectos.component.scss'],
