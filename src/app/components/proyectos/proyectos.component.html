@@ -1,62 +1,43 @@
 <div class="card" *ngIf="!loading; else loadingTemplate">
-    <p-table
-      [value]="unlockedProyects"
-      [frozenValue]="lockedProyects"
-      [scrollable]="true"
-      scrollHeight="400px"
-      [tableStyle]="{ 'min-width': '60rem' }"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>ID</th>
-          <th>Nombre del archivo</th>
-          <th>Tamaño</th>
-          <th>Ultima Modificación</th>
-          <th style="width: 5rem"></th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="frozenbody" let-proyect let-index="rowIndex">
-        <tr class="font-bold">
-          <td>{{ proyect.id }}</td>
-          <td>{{ proyect.filename }}</td>
-          <td>{{ proyect.size }}</td>
-          <td>{{ proyect.sheetid }}</td>
-          <td>
-            <button
-              pButton
-              pRipple
-              type="button"
-              icon="pi pi-lock-open"
-              (click)="toggleLock(proyect, true, index)"
-              size="small"
-              text
-            ></button>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-proyect let-index="rowIndex">
-        <tr>
-          <td>{{ proyect.id }}</td>
-          <td>{{ proyect.filename }}</td>
-          <td>{{ proyect.size }}</td>
-          <td>{{ proyect.sheetid }}</td>
-          <td>
-            <button
-              pButton
-              pRipple
-              type="button"
-              icon="pi pi-lock"
-              [disabled]="lockedProyects.length >= 2"
-              (click)="toggleLock(proyect, false, index)"
-              size="small"
-              text
-            ></button>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
-  
-  <ng-template #loadingTemplate>
-    <p>Loading projects...</p>
-  </ng-template>
+  <p-table
+    [value]="projects"
+    [scrollable]="true"
+    scrollHeight="400px"
+    [tableStyle]="{ 'min-width': '60rem' }"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Nombre del archivo</th>
+        <th>Tamaño</th>
+        <th>Última Modificación</th>
+        <th>Estado</th> <!-- Nueva columna para mostrar el estado -->
+        <th style="width: 5rem"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-project let-rowIndex="rowIndex">
+      <tr [ngClass]="{ 'unlocked': isProjectUnlocked(project) }">
+        <td>{{ project.id }}</td>
+        <td>{{ project.filename }}</td>
+        <td>{{ project.size }}</td>
+        <td>{{ project.sheetid }}</td>
+        <td>{{ isProjectUnlocked(project) ? 'Desbloqueado' : 'Bloqueado' }}</td> <!-- Estado del proyecto -->
+        <td>
+          <button
+            pButton
+            pRipple
+            type="button"
+            [icon]="isProjectUnlocked(project) ? 'pi pi-lock-open' : 'pi pi-lock'"
+            (click)="toggleLock(project)"
+            size="small"
+            text
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<ng-template #loadingTemplate>
+  <p>Cargando proyectos...</p>
+</ng-template>

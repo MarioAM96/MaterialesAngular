@@ -23,21 +23,22 @@ import { MessageService } from 'primeng/api';
   providers: [MessageService, ApiService],
 })
 export class ProyectosComponent implements OnInit {
-  unlockedProyects: Proyecto[] = [];
-  lockedProyects: Proyecto[] = [];
+  projects: Proyecto[] = [];
+  unlockedProject: Proyecto | null = null;
   loading: boolean = false;
 
   constructor(private apiService: ApiService, private messageService: MessageService) {}
 
   ngOnInit() {
-    this.fetchProyects();
+    this.fetchProjects();
   }
 
-  fetchProyects() {
+  fetchProjects() {
     this.loading = true;
     this.apiService.getProyects().subscribe(
       (response) => {
-        this.unlockedProyects = response;
+        this.projects = response;
+        this.unlockedProject = null; // Todos los proyectos inician bloqueados
         this.loading = false;
       },
       (error) => {
@@ -47,18 +48,17 @@ export class ProyectosComponent implements OnInit {
     );
   }
 
-  toggleLock(data: Proyecto, frozen: boolean, index: number) {
-    if (frozen) {
-      this.lockedProyects.splice(index, 1);
-      this.unlockedProyects.push(data);
+  toggleLock(project: Proyecto) {
+    if (this.unlockedProject && this.unlockedProject.id === project.id) {
+      // Si el proyecto ya está desbloqueado, lo bloqueamos
+      this.unlockedProject = null;
     } else {
-      this.unlockedProyects.splice(index, 1);
-      this.lockedProyects.push(data);
+      // Desbloqueamos el proyecto seleccionado y bloqueamos el anterior (si existe)
+      this.unlockedProject = project;
     }
-    this.sortProyects();
   }
 
-  sortProyects() {
-    this.unlockedProyects.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+  isProjectUnlocked(project: Proyecto): boolean {
+    return this.unlockedProject !== null && this.unlockedProject.id === project.id;
   }
 }
