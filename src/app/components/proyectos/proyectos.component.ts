@@ -24,6 +24,10 @@ import { AddUsersComponent } from '../add-users/add-users.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from '../../services/api.service';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { Product } from '../../models/product.model';
+import { ProductService } from '../../services/productservice';
+import { ImportsModule } from '../../imports';
+import { MessageService, SelectItem } from 'primeng/api';
 
 @Component({
   selector: 'app-proyectos',
@@ -41,114 +45,75 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
     FormsModule,
     MatDialogModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    ImportsModule
   ],
   templateUrl: './proyectos.component.html',
   styleUrls: ['./proyectos.component.scss'],
-  providers: [ApiService],
+  providers: [ProductService, MessageService]
 })
 export class ProyectosComponent implements OnInit {
-  allColumns = [
-    { name: 'ID', property: 'id', visible: true },
-    { name: 'Nombre del Archivo', property: 'filename', visible: true },
-    { name: 'Tamaño', property: 'size', visible: true },
-    { name: 'Ultima Modificación', property: 'last_modified', visible: true },
-    { name: 'Sheet ID', property: 'sheetid', visible: true },
-  ];
-  isLoading: boolean = false;
-  ApiService: any;
+  products!: Product[];
 
-  columnFilter: string = '';
-  dataSource = new MatTableDataSource<Proyecto>([]);
+  statuses!: SelectItem[];
 
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  clonedProducts: { [s: string]: Product } = {};
 
-  constructor(
-    private http: HttpClient,
-    private dialog: MatDialog,
-    private apiService: ApiService
-  ) {}
+  constructor(private productService: ProductService, private messageService: MessageService) {}
 
-  ngOnInit(): void {
-    this.getProjectsFromApi();
-    this.dataSource.filterPredicate = (data: Proyecto, filter: string) => {
-      const dataStr = Object.values(data).join(' ').toLowerCase(); // Convertir todos los valores de la fila a texto
-      // Normalizar los datos y el filtro antes de compararlos
-      const normalizedDataStr = this.removeTildes(dataStr);
-      const normalizedFilter = this.removeTildes(filter);
-      return normalizedDataStr.includes(normalizedFilter); // Comparar sin tildes
-    };
+  ngOnInit() {
+      this.productService.getProductsMini().then((data) => {
+          this.products = data;
+      });
+
+      this.statuses = [
+          { label: 'In Stock', value: 'INSTOCK' },
+          { label: 'Low Stock', value: 'LOWSTOCK' },
+          { label: 'Out of Stock', value: 'OUTOFSTOCK' }
+      ];
   }
 
-  ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
+  onRowEditInit(product: Product) {
+      this.clonedProducts[product.id as string] = { ...product };
   }
 
-  removeTildes(str: string): string {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Elimina los caracteres diacríticos
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    const normalizedFilterValue = this.removeTildes(filterValue)
-      .trim()
-      .toLowerCase();
-    this.dataSource.filter = normalizedFilterValue;
-  }
-
-  get displayedColumns(): string[] {
-    return this.allColumns
-      .filter((column) => column.visible)
-      .map((column) => column.property);
-  }
-
-  getProjectsFromApi(): void {
-    this.isLoading = true; // Inicia la carga
-    this.apiService.getProyects().subscribe(
-      (data: any[]) => {
-        const mappedData = data.map((item) => ({
-          id: item.id,
-          filename: item.filename,
-          size: item.size,
-          last_modified: item.last_modified,
-          sheetid: item.sheetid,
-        }));
-        this.dataSource.data = mappedData;
-        this.isLoading = false; // Finaliza la carga
-      },
-      (error) => {
-        console.error('Error al obtener los usuarios:', error);
-        this.isLoading = false; // Finaliza la carga en caso de error
+  onRowEditSave(product: Product) {
+      if (product.price !== undefined && product.price > 0) {
+          delete this.clonedProducts[product.id as string];
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product is updated' });
+      } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Price' });
       }
-    );
   }
 
-  toggleAllColumns(visible: boolean) {
-    this.allColumns.forEach((column) => (column.visible = visible));
+  onRowEditCancel(product: Product, index: number) {
+      this.products[index] = this.clonedProducts[product.id as string];
+      delete this.clonedProducts[product.id as string];
   }
 
-  filteredColumns() {
-    return this.allColumns.filter((column) =>
-      column.name.toLowerCase().includes(this.columnFilter.toLowerCase())
-    );
+  
+getSeverity(status: string): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' | undefined {
+
+  switch (status) {
+
+      case 'INSTOCK':
+
+          return 'success';
+
+      case 'LOWSTOCK':
+
+          return 'warn';
+
+      case 'OUTOFSTOCK':
+
+          return 'danger';
+
+      default:
+
+          return undefined;
+
   }
 
-  drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.allColumns, event.previousIndex, event.currentIndex);
-  }
+}
 
-  addUser() {
-    const dialogRef = this.dialog.open(AddUsersComponent, {
-      width: '400px',
-      panelClass: 'custom-dialog',
-    });
-
-    dialogRef.afterClosed().subscribe((result: Proyecto) => {
-      if (result) {
-        this.dataSource.data = [...this.dataSource.data, result]; // Añade el nuevo usuario a la tabla
-      }
-    });
-  }
 }
