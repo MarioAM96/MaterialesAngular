@@ -6,18 +6,32 @@ import { HttpClientModule } from '@angular/common/http';
 import { ActiveSheetService } from '../../services/activesheet.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ImportsModule } from '../../imports';
 import { forkJoin } from 'rxjs';
+import { Order } from '../../models/order.model';
+import { IftaLabelModule } from 'primeng/iftalabel';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-orders',
-  imports: [AgGridAngular, HttpClientModule, FormsModule, CommonModule],
+  imports: [
+    AgGridAngular,
+    HttpClientModule,
+    FormsModule,
+    CommonModule,
+    ImportsModule,
+    IftaLabelModule,
+  ],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.scss',
   providers: [ApiService],
 })
 export class OrdersComponent implements OnInit, AfterViewInit {
+  orders: Order[] | undefined;
+  selectedOrder: Order | undefined;
+  clonedProducts: { [s: string]: any } = {};
+  
   @ViewChild('myGrid') myGrid!: AgGridAngular;
 
   public rowData: any[] | null = null;
@@ -189,8 +203,6 @@ export class OrdersComponent implements OnInit, AfterViewInit {
       }
     );
   }
-  
-  
 
   removeOrder(index: number) {
     this.pedidosList.splice(index, 1);
@@ -202,7 +214,6 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 
   submitOrders() {
     const payloads = this.pedidosList.map((order) => ({
-      
       unuse: '',
       material: order.material,
       quantity: order.cantidad,
@@ -212,9 +223,11 @@ export class OrdersComponent implements OnInit, AfterViewInit {
       tecnico: order.tecnico,
       status: 'Pendiente',
     }));
-  
-    const requests = payloads.map((payload) => this.apiService.addOrder(payload));
-  
+
+    const requests = payloads.map((payload) =>
+      this.apiService.addOrder(payload)
+    );
+
     forkJoin(requests).subscribe(
       (responses) => {
         console.log('All orders added successfully:', responses);
@@ -234,6 +247,22 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 
   onSubmit() {
     console.log('Nuevo pedido:', this.newOrder);
-    this.showForm = false; 
+    this.showForm = false;
+  }
+
+  onRowEditInit(product: any) {
+    this.clonedProducts[product.id] = { ...product }; // Guardar la fila original
+  }
+
+  // Guarda la edición de una fila
+  onRowEditSave(product: any) {
+    // Aquí puedes agregar cualquier lógica de validación o guardar los cambios
+    delete this.clonedProducts[product.id]; // Elimina el estado clonado porque ya se guardó
+  }
+
+  // Cancela la edición de una fila y restaura el valor original
+  onRowEditCancel(product: any, index: number) {
+    this.pedidosList[index] = { ...this.clonedProducts[product.id] }; // Restaurar el valor original
+    delete this.clonedProducts[product.id]; // Eliminar el clon
   }
 }

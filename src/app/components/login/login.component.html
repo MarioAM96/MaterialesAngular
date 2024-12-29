@@ -1,6 +1,6 @@
 <div class="login-container">
   <div class="background-effect"></div>
-  
+
   <!-- Formulario de inicio de sesión -->
   <form *ngIf="!isLoggedIn" (ngSubmit)="onSubmit()">
     <h2 class="text-center">Gestión de Materiales</h2>
@@ -41,8 +41,15 @@
   <div *ngIf="isLoggedIn" class="project-selector">
     <h2 class="text-center">Bienvenido</h2>
     <p class="text-center">Selecciona el proyecto:</p>
-    <select id="projectSelect" [(ngModel)]="selectedProject" (change)="onProjectSelect()" class="form-control">
-      <option *ngFor="let project of projects" [value]="project.sheetid">{{ project.filename }}</option>
-    </select>
+    <form [formGroup]="formGroup" class="card flex justify-center">
+      <p-select
+        formControlName="selectedCity"
+        [options]="projects"
+        optionLabel="filename"
+        placeholder="Selecciona un Proyecto"
+        class="w-full md:w-56"
+        (onChange)="onProjectSelect()"
+      ></p-select>
+    </form>
   </div>
 </div>

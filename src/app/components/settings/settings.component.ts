@@ -1,128 +1,87 @@
 import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, ModuleRegistry } from 'ag-grid-community';
 import { ApiService } from '../../services/api.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { ActiveSheetService } from '../../services/activesheet.service';
+import { ImportsModule } from '../../imports';
+import { Table } from 'primeng/table';
+import { Customer, Representative } from '../../models/costumer.model';
+import { CustomerService } from '../../services/costumerservice';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'my-app',
-  imports: [AgGridAngular, HttpClientModule],
+  imports: [HttpClientModule,ImportsModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
-  providers: [ApiService],
+  providers: [ApiService, CustomerService],
 })
-export class SettingsComponent implements OnInit, AfterViewInit {
-  @ViewChild('myGrid') myGrid!: AgGridAngular;
+export class SettingsComponent implements OnInit  {
+  customers!: Customer[];
 
-  public rowData: any[] | null = null;
-  private checkboxStates: { [key: string]: boolean } = {};
+  representatives!: Representative[];
 
-  // Define columns for the grid including the custom operation column
-  public columnDefs: ColDef[] = [
-    { field: 'id', headerName: 'ID' },
-    { field: 'filename', headerName: 'Nombre de Archivo', editable: true },
-    { field: 'size', headerName: 'Tamaño', filter: 'agNumberColumnFilter' },
-    {
-      field: 'last_modified',
-      headerName: 'Última Modificación',
-      valueFormatter: (params) => {
-        const date = new Date(params.value * 1000);
-        return date.toLocaleDateString();
-      },
-    },
-    { field: 'sheetid', headerName: 'Sheet ID' },
-    {
-      headerName: 'Acciones',
-      cellRenderer: (params: any) => {
-        const container = document.createElement('div');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = this.checkboxStates[params.data.id] || false;
+  statuses!: any[];
 
-        const statusText = document.createElement('span');
-        statusText.style.marginLeft = '8px';
-        statusText.textContent = checkbox.checked ? 'Activo' : 'Inactivo';
+  loading: boolean = true;
 
-        checkbox.addEventListener('change', () => {
-          this.onCheckboxChange(params, checkbox.checked);
-          statusText.textContent = checkbox.checked ? 'Activo' : 'Inactivo';
-        });
+  activityValues: number[] = [0, 100];
 
-        container.appendChild(checkbox);
-        container.appendChild(statusText);
-        return container;
-      },
-      cellStyle: (params) => {
-        return this.checkboxStates[params.data.id]
-          ? { backgroundColor: 'green' }
-          : { backgroundColor: '' };
-      },
-    },
-  ];
-
-  // Default column definition for all the columns
-  public defaultColDef: ColDef = {
-    filter: 'agTextColumnFilter',
-    floatingFilter: true,
-  };
-
-  public rowSelection: 'single' | 'multiple' = 'multiple';
-  public paginationPageSize = 10;
-  public paginationPageSizeSelector: number[] = [10, 25, 50];
-
-  constructor(private apiService: ApiService, private activeSheetService: ActiveSheetService) {}
+  constructor(private customerService: CustomerService) {}
 
   ngOnInit() {
-    // Retrieve activeSheetId from sessionStorage
-    const activeSheetId = sessionStorage.getItem('activeSheetId');
-  
-    this.apiService.getProyects().subscribe(
-      (response) => {
-        console.log('Proyectos obtenidos:', response);
-        this.rowData = response;
-  
-        // Set checkbox states based on activeSheetId
-        if (activeSheetId) {
-          this.rowData?.forEach((row) => {
-            this.checkboxStates[row.id] = row.sheetid === activeSheetId;
-          });
-        }
-      },
-      (error) => {
-        console.error('Error al obtener los proyectos:', error);
-      }
-    );
+      this.customerService.getCustomersLarge().then((customers) => {
+          this.customers = customers;
+          this.loading = false;
+
+          this.customers.forEach((customer) => (customer.date = new Date(<Date>customer.date)));
+      });
+
+      this.representatives = [
+          { name: 'Amy Elsner', image: 'amyelsner.png' },
+          { name: 'Anna Fali', image: 'annafali.png' },
+          { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
+          { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
+          { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
+          { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
+          { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
+          { name: 'Onyama Limba', image: 'onyamalimba.png' },
+          { name: 'Stephen Shaw', image: 'stephenshaw.png' },
+          { name: 'Xuxue Feng', image: 'xuxuefeng.png' }
+      ];
+
+      this.statuses = [
+          { label: 'Unqualified', value: 'unqualified' },
+          { label: 'Qualified', value: 'qualified' },
+          { label: 'New', value: 'new' },
+          { label: 'Negotiation', value: 'negotiation' },
+          { label: 'Renewal', value: 'renewal' },
+          { label: 'Proposal', value: 'proposal' }
+      ];
   }
 
-  ngAfterViewInit() {
-    console.log(this.myGrid.api);
+  clear(table: Table) {
+      table.clear();
   }
 
-  onCheckboxChange(params: any, isChecked: boolean) {
-    const rowId = params.data.id;
-  
-    if (isChecked) {
-      for (const key in this.checkboxStates) {
-        if (this.checkboxStates.hasOwnProperty(key)) {
-          this.checkboxStates[key] = false;
-        }
+  getSeverity(status: string) {
+      switch (status) {
+          case 'unqualified':
+              return 'danger';
+
+          case 'qualified':
+              return 'success';
+
+          case 'new':
+              return 'info';
+
+          case 'negotiation':
+              return 'warn';
+
+          case 'renewal':
+              return null;
+
+          default:
+              return 'unknown';
       }
-    }
-  
-    this.checkboxStates[rowId] = isChecked;
-    this.myGrid.api.refreshCells({ force: true });
-  
-    if (isChecked) {
-      const sheetId = params.data.sheetid;
-      const filename = params.data.filename;
-      this.activeSheetService.setActiveSheetId(sheetId);
-      sessionStorage.setItem('activeSheetFilename', filename);
-    } else {
-      this.activeSheetService.setActiveSheetId(null);
-      sessionStorage.removeItem('activeSheetId'); // Remove activeSheetId
-      sessionStorage.setItem('activeSheetFilename', '');
-    }
   }
 }

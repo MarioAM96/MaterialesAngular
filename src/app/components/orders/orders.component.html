@@ -1,101 +1,212 @@
 <div class="container-fluid mt-4">
-    <div class="header">
-        <h1>PEDIDOS</h1>
-        <button (click)="toggleForm()" class="btn create-button">+ Crear</button>
-    </div>
-    <div *ngIf="showForm" class="form-and-list-container">
-        <!-- Formulario de Pedido -->
-        <div class="order-form">
-            <form (ngSubmit)="addOrder()">
-                <h3>Nuevo Pedido</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="material">Material Solicitado</label>
-                        <select [(ngModel)]="newOrder.material" name="material" id="material" required>
-                            <option *ngFor="let material of materials" [value]="material.name">
-                                {{ material.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="cantidad">Cantidad</label>
-                        <input type="number" [(ngModel)]="newOrder.cantidad" name="cantidad" id="cantidad" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="observacion">Observación</label>
-                        <input type="text" [(ngModel)]="newOrder.observacion" name="observacion" id="observacion">
-                    </div>
-                    <div class="form-group">
-                        <label for="fechaSolicitada">Fecha Solicitada</label>
-                        <input type="date" [(ngModel)]="newOrder.fechaSolicitada" name="fechaSolicitada"
-                            id="fechaSolicitada" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="paqueteTrabajo">Paquete de Trabajo</label>
-                        <input type="text" [(ngModel)]="newOrder.paqueteTrabajo" name="paqueteTrabajo"
-                            id="paqueteTrabajo">
-                    </div>
-                    <div class="form-group">
-                        <label for="tecnico">Técnico Responsable</label>
-                        <select [(ngModel)]="newOrder.tecnico" name="tecnico" id="tecnico" required>
-                            <option *ngFor="let tecnico of tecnicos" [value]="tecnico.name">
-                                {{ tecnico.name }}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-buttons">
-                    <button type="submit" class="btn submit-button">Agregar Pedido</button>
-                    <button type="button" (click)="cancelOrder()" class="btn cancel-button">Cancelar</button>
-                </div>
-            </form>
+  <div class="header">
+    <h1>PEDIDOS</h1>
+    <button (click)="toggleForm()" class="btn create-button">+ Crear</button>
+  </div>
+  <div *ngIf="showForm" class="form-and-list-container">
+    <!-- Formulario de Pedido -->
+    <div class="order-form">
+      <form (ngSubmit)="addOrder()">
+        <h3>Nuevo Pedido</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <p-iftalabel class="w-full md:w-56">
+              <p-select
+                [options]="materials"
+                [(ngModel)]="newOrder.material"
+                placeholder="Seleccione un Material"
+                [editable]="true"
+                optionLabel="name"
+                optionValue="name"
+                name="material"
+                id="material"
+                class="w-full md:w-56"
+              ></p-select>
+              <label for="material">Material</label>
+            </p-iftalabel>
+          </div>
+          <div class="form-group">
+            <p-iftalabel>
+              <p-inputnumber
+                [(ngModel)]="newOrder.cantidad"
+                inputId="cantidad"
+                required
+                name="cantidad"
+                id="cantidad"
+              ></p-inputnumber>
+              <label for="cantidad">Cantidad</label>
+            </p-iftalabel>
+          </div>
         </div>
+        <div class="form-row">
+          <div class="form-group">
+            <p-iftalabel>
+              <input
+                pInputText
+                id="observacion"
+                [(ngModel)]="newOrder.observacion"
+                name="observacion"
+              />
+              <label for="observacion">Observación</label>
+            </p-iftalabel>
+          </div>
+          <div class="form-group">
+            <p-iftalabel>
+              <p-datepicker
+                [(ngModel)]="newOrder.fechaSolicitada"
+                [iconDisplay]="'input'"
+                [showIcon]="true"
+                name="fechaSolicitada"
+                id="fechaSolicitada"
+                inputId="icondisplay"
+              />
+              <label for="fechaSolicitada">Fecha Solicita</label>
+            </p-iftalabel>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <p-iftalabel>
+              <input
+                pInputText
+                id="paqueteTrabajo"
+                [(ngModel)]="newOrder.paqueteTrabajo"
+                name="paqueteTrabajo"
+              />
+              <label for="paqueteTrabajo">Paquete de trabajo</label>
+            </p-iftalabel>
+          </div>
+          <div class="form-group">
+            <p-iftalabel class="w-full md:w-56">
+              <p-select
+                [options]="tecnicos"
+                [(ngModel)]="newOrder.tecnico"
+                placeholder="Seleccione un Técnico"
+                [editable]="true"
+                optionLabel="name"
+                optionValue="name"
+                name="tecnico"
+                id="tecnico"
+                class="w-full md:w-56"
+              ></p-select>
+              <label for="material">Técnico Responsable</label>
+            </p-iftalabel>
+          </div>
+        </div>
+        <div class="form-buttons">
+          <button type="submit" class="btn submit-button">
+            Agregar Pedido
+          </button>
+          <button
+            type="button"
+            (click)="cancelOrder()"
+            class="btn cancel-button"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
 
-        <!-- Lista de Pedidos -->
-        <div class="card">
-            <h3>Pedidos en Lista</h3>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Material</th>
-                        <th>Cantidad</th>
-                        <th>Observación</th>
-                        <th>Fecha Solicitada</th>
-                        <th>Paquete de Trabajo</th>
-                        <th>Técnico</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let pedido of pedidosList; let i = index">
-                        <td>{{ pedido.material }}</td>
-                        <td>{{ pedido.cantidad }}</td>
-                        <td>{{ pedido.observacion }}</td>
-                        <td>{{ pedido.fechaSolicitada }}</td>
-                        <td>{{ pedido.paqueteTrabajo }}</td>
-                        <td>{{ pedido.tecnico }}</td>
-                        <td>
-                            <button (click)="removeOrder(i)" class="btn btn-danger">Eliminar</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="button-container">
-                <button (click)="submitOrders()" class="btn send-button">Enviar Pedidos</button>
+    <!-- Lista de Pedidos NUEVA-->
+    <p-table
+      [value]="pedidosList"
+      dataKey="id"
+      editMode="row"
+      [tableStyle]="{ 'min-width': '50rem' }"
+    >
+      <ng-template #header>
+        <tr>
+          <th style="width: 20%">Material</th>
+          <th style="width: 20%">Cantidad</th>
+          <th style="width: 20%">Observación</th>
+          <th style="width: 20%">Fecha Solicitada</th>
+          <th style="width: 20%">Paquete de Trabajo</th>
+          <th style="width: 20%">Técnico</th>
+          <th style="width: 20%">Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-product let-editing="editing" let-ri="rowIndex">
+        <tr [pEditableRow]="product">
+          <td>{{ product.material }}</td>
+          <td>
+            <p-cellEditor>
+              <ng-template #input>
+                <input
+                  pInputText
+                  type="text"
+                  [(ngModel)]="product.cantidad"
+                  required
+                />
+              </ng-template>
+              <ng-template #output>
+                {{ product.cantidad }}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td>{{ product.observacion }}</td>
+          <td>{{ product.fechaSolicitada }}</td>
+          <td>{{ product.paqueteTrabajo }}</td>
+          <td>{{ product.tecnico }}</td>
+          <td>
+            <div class="flex items-center justify-center gap-2">
+              <button
+                *ngIf="!editing"
+                pButton
+                pRipple
+                type="button"
+                pInitEditableRow
+                icon="pi pi-pencil"
+                (click)="onRowEditInit(product)"
+                text
+                rounded
+                severity="secondary"
+              ></button>
+              <button
+                *ngIf="editing"
+                pButton
+                pRipple
+                type="button"
+                pSaveEditableRow
+                icon="pi pi-check"
+                (click)="onRowEditSave(product)"
+                text
+                rounded
+                severity="secondary"
+              ></button>
+              <button
+                *ngIf="editing"
+                pButton
+                pRipple
+                type="button"
+                pCancelEditableRow
+                icon="pi pi-times"
+                (click)="onRowEditCancel(product, ri)"
+                text
+                rounded
+                severity="secondary"
+              ></button>
             </div>
-        </div>
-    </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 
-    <!-- Grid de Pedidos -->
-    <div class="grid-container">
-        <ag-grid-angular #myGrid style="width: 100%; height: 100%;" [rowData]="rowData" [columnDefs]="columnDefs"
-            [defaultColDef]="defaultColDef" [rowSelection]="rowSelection" [pagination]="true"
-            [paginationPageSize]="paginationPageSize" [paginationPageSizeSelector]="paginationPageSizeSelector"
-            [enableCellTextSelection]="true">
-        </ag-grid-angular>
-    </div>
+  <!-- Grid de Pedidos -->
+  <div class="grid-container">
+    <ag-grid-angular
+      #myGrid
+      style="width: 100%; height: 100%"
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [rowSelection]="rowSelection"
+      [pagination]="true"
+      [paginationPageSize]="paginationPageSize"
+      [paginationPageSizeSelector]="paginationPageSizeSelector"
+      [enableCellTextSelection]="true"
+    >
+    </ag-grid-angular>
+  </div>
 </div>

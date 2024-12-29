@@ -6,7 +6,9 @@ import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { Proyecto } from '../../models/proyectos.model';
 import { ApiService } from '../../services/api.service';
-import { MessageService } from 'primeng/api';
+import { MessageService, SelectItem } from 'primeng/api';
+import { TagModule } from 'primeng/tag';
+import { ActiveSheetService } from '../../services/activesheet.service';
 
 @Component({
   selector: 'app-proyectos',
@@ -17,48 +19,76 @@ import { MessageService } from 'primeng/api';
     TableModule,
     ButtonModule,
     RippleModule,
+    TagModule
   ],
   templateUrl: './proyectos.component.html',
   styleUrls: ['./proyectos.component.scss'],
   providers: [MessageService, ApiService],
 })
+
 export class ProyectosComponent implements OnInit {
   projects: Proyecto[] = [];
   unlockedProject: Proyecto | null = null;
   loading: boolean = false;
+  statuses!: SelectItem[];
 
-  constructor(private apiService: ApiService, private messageService: MessageService) {}
+  constructor(
+    private apiService: ApiService,
+    private messageService: MessageService,
+    private activeSheetService: ActiveSheetService
+  ) {}
 
   ngOnInit() {
-    this.fetchProjects();
+    const activeSheetId = sessionStorage.getItem('activeSheetId');
+    if (activeSheetId) {
+      this.fetchProjects(activeSheetId);
+    } else {
+      this.fetchProjects();
+    }
   }
 
-  fetchProjects() {
+  fetchProjects(activeSheetId?: string) {
     this.loading = true;
     this.apiService.getProyects().subscribe(
       (response) => {
         this.projects = response;
-        this.unlockedProject = null; // Todos los proyectos inician bloqueados
+        if (activeSheetId) {
+          const projectToUnlock = this.projects.find(
+            (project) => project.sheetid === activeSheetId
+          );
+          if (projectToUnlock) {
+            this.unlockedProject = projectToUnlock;
+          }
+        }
         this.loading = false;
       },
       (error) => {
         this.loading = false;
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener los proyectos' });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al obtener los proyectos',
+        });
       }
     );
   }
 
   toggleLock(project: Proyecto) {
     if (this.unlockedProject && this.unlockedProject.id === project.id) {
-      // Si el proyecto ya está desbloqueado, lo bloqueamos
       this.unlockedProject = null;
+      sessionStorage.removeItem('activeSheetId');
+      sessionStorage.setItem('activeSheetFilename', '');
     } else {
-      // Desbloqueamos el proyecto seleccionado y bloqueamos el anterior (si existe)
       this.unlockedProject = project;
+      sessionStorage.setItem('activeSheetId', project.sheetid);
+      this.activeSheetService.setActiveSheetId(project.sheetid);
+      sessionStorage.setItem('activeSheetFilename', project.filename); 
     }
   }
 
   isProjectUnlocked(project: Proyecto): boolean {
-    return this.unlockedProject !== null && this.unlockedProject.id === project.id;
+    return (
+      this.unlockedProject !== null && this.unlockedProject.id === project.id
+    );
   }
 }

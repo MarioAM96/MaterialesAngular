@@ -14,3 +14,98 @@
     </mat-card>
   </div>
 </div>
+
+<p-table
+  [value]="products"
+  dataKey="id"
+  editMode="row"
+  [tableStyle]="{ 'min-width': '50rem' }"
+>
+  <ng-template #header>
+    <tr>
+      <th style="width: 20%">Material</th>
+      <th style="width: 20%">Cantidad</th>
+      <th style="width: 20%">Observación</th>
+      <th style="width: 20%">Fecha Solicitada</th>
+      <th style="width: 20%">Paquete de Trabajo</th>
+      <th style="width: 20%">Técnico</th>
+      <th style="width: 20%">Acciones</th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-product let-editing="editing" let-ri="rowIndex">
+    <tr [pEditableRow]="product">
+      <td>
+        {{ product.material }}
+      </td>
+      <td>
+        {{ product.material }}
+      </td>
+      <td>
+        {{ product.material }}
+      </td>
+      <td>
+        {{ product.material }}
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template #input>
+            <input pInputText type="text" [(ngModel)]="product.name" required />
+          </ng-template>
+          <ng-template #output>
+            {{ product.cantidad }}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template #input>
+            <input pInputText type="text" [(ngModel)]="product.price" />
+          </ng-template>
+          <ng-template #output>
+            {{ product.price | currency : "USD" }}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <div class="flex items-center justify-center gap-2">
+          <button
+            *ngIf="!editing"
+            pButton
+            pRipple
+            type="button"
+            pInitEditableRow
+            icon="pi pi-pencil"
+            (click)="onRowEditInit(product)"
+            text
+            rounded
+            severity="secondary"
+          ></button>
+          <button
+            *ngIf="editing"
+            pButton
+            pRipple
+            type="button"
+            pSaveEditableRow
+            icon="pi pi-check"
+            (click)="onRowEditSave(product)"
+            text
+            rounded
+            severity="secondary"
+          ></button>
+          <button
+            *ngIf="editing"
+            pButton
+            pRipple
+            type="button"
+            pCancelEditableRow
+            icon="pi pi-times"
+            (click)="onRowEditCancel(product, ri)"
+            text
+            rounded
+            severity="secondary"
+          ></button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
