@@ -1,50 +1,165 @@
 <div class="table-container">
-  <h2>Materiales</h2>
+  <h2 class="project-title">Materiales</h2>
   <br>
+  <p-table
+  #dt2
+  [value]="materials"
+  dataKey="id"
+  [rows]="10"
+  [rowsPerPageOptions]="[10, 25, 50]"
+  [loading]="loading"
+  [paginator]="true"
+  stripedRows
+  [tableStyle]="{ 'min-width': '50rem' }"
+  [globalFilterFields]="[
+    'id',
+    'material',
+    'codigo',
+    'descripcion',
+    'stockInicial',
+    'stockReal',
+    'bodega',
+    'nombreDelProyecto'
+  ]"
+  [tableStyle]="{ 'min-width': '75rem' }"
+>
+  <ng-template #caption>
+    <div class="flex">
+      <p-iconfield iconPosition="left" class="ml-auto">
+        <p-inputicon>
+          <i class="pi pi-search"></i>
+        </p-inputicon>
+        <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')" placeholder="Buscar" />
+      </p-iconfield>
+    </div>
+  </ng-template>
+  <ng-template #header>
+    <tr>
+      <th pSortableColumn="id" style="width: 22%">
+        ID <p-sortIcon field="id" />
+      </th>
+      <th pSortableColumn="material" style="width: 22%">
+        Material <p-sortIcon field="material" />
+      </th>
+      <th pSortableColumn="codigo" style="width: 22%">
+        Código <p-sortIcon field="codigo" />
+      </th>
+      <th pSortableColumn="descripcion" style="width: 22%">
+        Descripción <p-sortIcon field="descripcion" />
+      </th>
+      <th pSortableColumn="stockInicial" style="width: 22%">
+        Stock Inicial <p-sortIcon field="stockInicial" />
+      </th>
+      <th pSortableColumn="stockReal" style="width: 22%">
+        Stock Real <p-sortIcon field="stockReal" />
+      </th>
+      <th pSortableColumn="bodega" style="width: 22%">
+        Bodega <p-sortIcon field="bodega" />
+      </th>
+      <th pSortableColumn="nombreDelProyecto" style="width: 22%">
+        Nombre del Proyecto <p-sortIcon field="nombreDelProyecto" />
+      </th>
+    </tr>
+    <tr>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="id"
+          ariaLabel="Filter Name"
+          (input)="applyColumnFilter($event, 'id')"
+        ></p-columnFilter>
+      </th>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="material"
+          ariaLabel="Filter Country"
+          (input)="applyColumnFilter($event, 'material')"
+        ></p-columnFilter>
+      </th>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="codigo"
+          ariaLabel="Filter Country"
+          (input)="applyColumnFilter($event, 'codigo')"
+        ></p-columnFilter>
+      </th>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="descripcion"
+          ariaLabel="Filter Country"
+          (input)="applyColumnFilter($event, 'descripcion')"
+        ></p-columnFilter>
+      </th>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="stockInicial"
+          ariaLabel="Filter Country"
+          (input)="applyColumnFilter($event, 'stockInicial')"
+        ></p-columnFilter>
+      </th>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="stockReal"
+          ariaLabel="Filter Country"
+          (input)="applyColumnFilter($event, 'stockReal')"
+        ></p-columnFilter>
+      </th>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="bodega"
+          ariaLabel="Filter Country"
+          (input)="applyColumnFilter($event, 'bodega')"
+        ></p-columnFilter>
+      </th>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="nombreDelProyecto"
+          ariaLabel="Filter Country"
+          (input)="applyColumnFilter($event, 'nombreDelProyecto')"
+        ></p-columnFilter>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-materials>
+    <tr>
+      <td>
+        {{ materials.id }}
+      </td>
+      <td>
+        {{ materials.material }}
+      </td>
+      <td>
+        {{ materials.codigo }}
+      </td>
+      <td>
+        {{ materials.descripcion }}
+      </td>
+      <td>
+        {{ materials.stockInicial }}
+      </td>
+      <td>
+        {{ materials.stockReal }}
+      </td>
+      <td>
+        {{ materials.bodega }}
+      </td>
+      <td>
+        {{ materials.codigo }}
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template #emptymessage>
+    <tr>
+      <td colspan="5">No se encontraron registros.</td>
+    </tr>
+  </ng-template>
+</p-table>
 
-  <button mat-raised-button color="primary" (click)="addUser()" class="add-user-btn">
-    <mat-icon>add</mat-icon> <!-- Ícono de "más" -->
-  </button>
-
-  <!-- Overlay de carga -->
-  <div class="loading-overlay" *ngIf="isLoading">
-    <mat-spinner></mat-spinner>
-  </div>
-
-  <!-- Contenedor para buscador y selector -->
-  <div class="search-and-select">
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Buscar</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Ejm. John">
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="column-selector">
-      <mat-label>Seleccionar Columnas</mat-label>
-      <mat-select>
-        <mat-option>
-          <mat-checkbox (change)="toggleAllColumns(true)">Mostrar todos</mat-checkbox>
-        </mat-option>
-        <mat-option>
-          <mat-checkbox (change)="toggleAllColumns(false)">Ocultar todos</mat-checkbox>
-        </mat-option>
-        <mat-option *ngFor="let column of filteredColumns()">
-          <mat-checkbox [(ngModel)]="column.visible">{{ column.name }}</mat-checkbox>
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-
-  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 custom-table">
-    <ng-container *ngFor="let column of allColumns">
-      <ng-container [matColumnDef]="column.property" *ngIf="column.visible">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column.name }}</th>
-        <td mat-cell *matCellDef="let element">{{ element[column.property] }}</td>
-      </ng-container>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-
-  <mat-paginator [pageSizeOptions]="[5, 10, 20, 50, 100, 200]" showFirstLastButtons></mat-paginator>
 </div>

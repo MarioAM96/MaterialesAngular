@@ -1,0 +1,45 @@
+  
+  .project-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .card {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .loading-message {
+    font-size: 1.2rem;
+    color: #777;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .unlocked {
+    background-color: #f0fdf4; // Color verde claro para indicar desbloqueado.
+  }
+  
+  p-table {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+  }
+  
+  th {
+    background-color: #007ad9;
+    color: white;
+    text-align: left;
+    padding: 0.5rem;
+  }
+  
+  td {
+    padding: 0.5rem;
+  }
+  
+  button {
+    cursor: pointer;
+  }
