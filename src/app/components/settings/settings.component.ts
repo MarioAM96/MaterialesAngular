@@ -47,3 +47,7 @@ export class SettingsComponent implements OnInit {
     this.dt2!.filter(value, field, 'contains');
   }
 }
+
+
+
+

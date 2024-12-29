@@ -10,13 +10,14 @@ import { ImportsModule } from '../../imports';
 import { forkJoin } from 'rxjs';
 import { Order } from '../../models/order.model';
 import { IftaLabelModule } from 'primeng/iftalabel';
+import { Table } from 'primeng/table'
+
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-orders',
   imports: [
-    AgGridAngular,
     HttpClientModule,
     FormsModule,
     CommonModule,
@@ -28,73 +29,22 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   providers: [ApiService],
 })
 export class OrdersComponent implements OnInit, AfterViewInit {
-  orders: Order[] | undefined;
   selectedOrder: Order | undefined;
   clonedProducts: { [s: string]: any } = {};
+  loading: boolean = true;
   
   @ViewChild('myGrid') myGrid!: AgGridAngular;
+  @ViewChild('dt1') dt1: Table | undefined;
+  orders!: Order[];
 
   public rowData: any[] | null = null;
   public rowDataMaterials: any[] | null = null;
   public rowDataTecnicos: any[] | null = null;
 
-  public columnDefs: ColDef[] = [
-    { field: 'id', headerName: 'ID', type: 'text' },
-    {
-      field: 'Material Solicitado',
-      headerName: 'Material Solicitado',
-      type: 'text',
-    },
-    { field: 'Cantidad', headerName: 'Cantidad', type: 'number' },
-    { field: 'Observación', headerName: 'Observación', type: 'text' },
-    {
-      field: 'Fecha solicitada',
-      headerName: 'Fecha Solicitada',
-      type: 'date',
-      valueFormatter: (params) => {
-        const date = new Date(params.value);
-        return date.toLocaleDateString();
-      },
-    },
-    {
-      field: 'Paquete de Trabajo',
-      headerName: 'Paquete de Trabajo',
-      type: 'text',
-    },
-    {
-      field: 'Técnico Responsable',
-      headerName: 'Técnico Responsable',
-      type: 'text',
-    },
-    { field: 'Status Entrega', headerName: 'Status Entrega', type: 'text' },
-    { field: 'Bodega', headerName: 'Bodega', type: 'number' },
-    { field: 'Código', headerName: 'Código', type: 'number' },
-    {
-      field: 'Fecha de entrega',
-      headerName: 'Fecha de Entrega',
-      type: 'date',
-      valueFormatter: (params) => {
-        if (params.value === 0) return 'N/A';
-        const date = new Date(params.value);
-        return date.toLocaleDateString();
-      },
-    },
-    {
-      field: 'Cantidad Entregada',
-      headerName: 'Cantidad Entregada',
-      type: 'number',
-    },
-    // { field: 'udf', headerName: 'UDF', type: 'text' },
-  ];
-
   public defaultColDef: ColDef = {
     filter: 'agTextColumnFilter',
     floatingFilter: true,
   };
-
-  public rowSelection: 'single' | 'multiple' = 'multiple';
-  public paginationPageSize = 10;
-  public paginationPageSizeSelector: number[] = [10, 25, 50, 100, 200];
 
   public showForm = false;
   newOrder = {
@@ -161,8 +111,9 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 
   getOrders() {
     this.apiService.getOrders().subscribe(
-      (response) => {
-        this.rowData = response;
+      (response: Order[]) => {
+        this.orders = response.map((item) => new Order(item));
+        this.loading = false;
       },
       (error) => {
         console.error('Error al obtener las ordenes:', error);
@@ -264,5 +215,13 @@ export class OrdersComponent implements OnInit, AfterViewInit {
   onRowEditCancel(product: any, index: number) {
     this.pedidosList[index] = { ...this.clonedProducts[product.id] }; // Restaurar el valor original
     delete this.clonedProducts[product.id]; // Eliminar el clon
+  }
+
+  applyFilterGlobal($event: any, stringVal: any) {
+    this.dt1!.filterGlobal(($event.target as HTMLInputElement).value, stringVal);
+  }
+  applyColumnFilter(event: Event, field: string) {
+    const value = (event.target as HTMLInputElement).value;
+    this.dt1!.filter(value, field, 'contains');
   }
 }
