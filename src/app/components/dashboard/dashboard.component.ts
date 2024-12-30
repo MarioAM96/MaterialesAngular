@@ -30,6 +30,15 @@ export class DashboardComponent {
     private messageService: MessageService
   ) {}
 
+  pedidosList: {
+    material: string;
+    cantidad: number | null;
+    observacion: string;
+    fechaSolicitada: string;
+    paqueteTrabajo: string;
+    tecnico: string;
+  }[] = [];
+
   products!: Product[];
 
   statuses!: SelectItem[];
@@ -43,15 +52,14 @@ export class DashboardComponent {
     //   this.products = data;
     // });
 
-    this.products = [
+    this.pedidosList = [
       {
         material: 'Cemento',
         cantidad: 50,
         observacion: 'Requiere entrega urgente',
         fechaSolicitada: '2024-12-30',
         paqueteTrabajo: 'Paquete A',
-        tecnico: 'Juan Pérez',
-        inventoryStatus: 'OUTOFSTOCK'
+        tecnico: 'Juan Pérez'
       },
       {
         material: 'Arena',
@@ -59,8 +67,7 @@ export class DashboardComponent {
         observacion: 'Verificar calidad antes de entrega',
         fechaSolicitada: '2024-12-31',
         paqueteTrabajo: 'Paquete B',
-        tecnico: 'Maria Gómez',
-        inventoryStatus: 'OUTOFSTOCK'
+        tecnico: 'Maria Gómez'
       },
       {
         material: 'Grava',
@@ -68,8 +75,7 @@ export class DashboardComponent {
         observacion: 'Pedido regular',
         fechaSolicitada: '2024-12-29',
         paqueteTrabajo: 'Paquete C',
-        tecnico: 'Carlos Rodríguez',
-        inventoryStatus: 'OUTOFSTOCK'
+        tecnico: 'Carlos Rodríguez'
       },
       {
         material: 'Ladrillos',
@@ -77,8 +83,7 @@ export class DashboardComponent {
         observacion: 'Urgente, entregar antes de fin de mes',
         fechaSolicitada: '2024-12-28',
         paqueteTrabajo: 'Paquete D',
-        tecnico: 'Ana Torres',
-        inventoryStatus: 'OUTOFSTOCK'
+        tecnico: 'Ana Torres'
       }
     ];
   }

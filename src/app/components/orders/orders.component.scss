@@ -2,7 +2,7 @@
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #F9FAFB; /* Fondo general */
-    color: #000000; /* Texto negro */
+    color: #333333; /* Texto gris oscuro */
     margin: 0;
 }
 
@@ -22,24 +22,26 @@ body {
 
 .header h1 {
     margin: 0;
-    font-size: 24px;
+    font-size: 28px;
+    color: #333333;
 }
 
 .btn {
     display: inline-block;
     text-decoration: none;
     font-size: 14px;
-    padding: 8px 16px;
+    padding: 10px 20px;
     border-radius: 4px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s;
-    background-color: #000000; /* Fondo negro */
+    transition: background-color 0.3s, transform 0.2s;
+    background-color: #000000; /* Fondo azul */
     color: #ffffff; /* Texto blanco */
 }
 
 .btn:hover {
-    background-color: #333333; /* Color más oscuro para hover */
+    background-color: #3e3e3e; /* Azul más oscuro para hover */
+    transform: translateY(-2px);
 }
 
 .form-and-list-container {
@@ -49,51 +51,55 @@ body {
     margin-bottom: 20px;
 }
 
-.order-form {
+.order-cont {
     flex: 1;
     background-color: #ffffff;
     padding: 20px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     margin-right: 10px;
 }
 
-.order-form h3 {
+.order-cont h3 {
     margin-top: 0;
     margin-bottom: 20px;
-    font-size: 20px;
+    font-size: 22px;
+    color: #333333;
 }
 
 .form-row {
     display: flex;
     flex-wrap: wrap;
+    gap: 20px; /* Espacio entre los inputs */
 }
 
 .form-group {
-    flex: 1 1 45%;
+    flex: 1 1 calc(50% - 20px); /* Ajuste para que dos inputs quepan en una fila */
     display: flex;
     flex-direction: column;
-    margin: 10px;
+    margin-bottom: 20px;
 }
 
 label {
     margin-bottom: 5px;
     font-weight: 500;
+    color: #555555;
 }
 
 input, select {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     border-radius: 4px;
     border: 1px solid #cccccc; /* Bordes de inputs */
     font-size: 14px;
-    color: #000000; /* Texto negro */
+    color: #333333; /* Texto gris oscuro */
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 input:focus, select:focus {
     outline: none;
-    border-color: #888888;
-    box-shadow: 0 0 5px rgba(136, 136, 136, 0.3);
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
 .form-buttons {
@@ -103,37 +109,38 @@ input:focus, select:focus {
 }
 
 .submit-button {
-    background-color: #000000; /* Fondo negro */
+    background-color: #28a745; /* Verde para submit */
     color: #ffffff; /* Texto blanco */
     margin-right: 10px;
 }
 
 .submit-button:hover {
-    background-color: #333333; /* Color más oscuro para hover */
+    background-color: #218838; /* Verde más oscuro para hover */
 }
 
 .cancel-button {
-    background-color: #000000; /* Fondo negro */
+    background-color: #dc3545; /* Rojo para cancelar */
     color: #ffffff; /* Texto blanco */
 }
 
 .cancel-button:hover {
-    background-color: #333333; /* Color más oscuro para hover */
+    background-color: #c82333; /* Rojo más oscuro para hover */
 }
 
 .card {
     flex: 1;
     background-color: #ffffff;
     padding: 20px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     margin-left: 10px;
 }
 
 .card h3 {
     margin-top: 0;
     margin-bottom: 20px;
-    font-size: 20px;
+    font-size: 22px;
+    color: #333333;
 }
 
 .table {
@@ -143,15 +150,15 @@ input:focus, select:focus {
 }
 
 .table th, .table td {
-    padding: 8px;
+    padding: 10px;
     text-align: left;
-    border-bottom: 1px solid #cccccc; /* Bordes de tabla */
-    color: #000000; /* Texto negro */
+    border-bottom: 1px solid #e0e0e0; /* Bordes de tabla */
+    color: #333333; /* Texto gris oscuro */
 }
 
 .table th {
-    background-color: #f2f2f2;
-    font-weight: normal;
+    background-color: #f8f9fa;
+    font-weight: bold;
 }
 
 .table-striped tbody tr:nth-child(odd) {
@@ -164,17 +171,23 @@ input:focus, select:focus {
 
 .button-container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-end; /* Alinea el botón a la derecha */
     margin-top: 20px;
 }
 
 .send-button {
-    background-color: #000000; /* Fondo negro */
+    background-color: #000000; /* Fondo azul */
     color: #ffffff; /* Texto blanco */
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .send-button:hover {
-    background-color: #333333; /* Color más oscuro para hover */
+    background-color: #0056b3; /* Azul más oscuro para hover */
+    transform: translateY(-2px);
 }
 
 .btn-danger {
@@ -210,7 +223,7 @@ input:focus, select:focus {
     .form-and-list-container {
         flex-direction: column;
     }
-    .order-form,
+    .order-cont,
     .card {
         margin: 0;
         margin-bottom: 20px;
@@ -222,7 +235,7 @@ input:focus, select:focus {
         flex: 1 1 100%;
         margin: 10px 0;
     }
-    .order-form,
+    .order-cont,
     .card {
         margin: 0;
         margin-bottom: 20px;

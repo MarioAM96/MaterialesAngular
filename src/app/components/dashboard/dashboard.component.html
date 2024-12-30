@@ -16,7 +16,7 @@
 </div>
 
 <p-table
-  [value]="products"
+  [value]="pedidosList"
   dataKey="id"
   editMode="row"
   [tableStyle]="{ 'min-width': '50rem' }"
@@ -32,39 +32,32 @@
       <th style="width: 20%">Acciones</th>
     </tr>
   </ng-template>
-  <ng-template #body let-product let-editing="editing" let-ri="rowIndex">
-    <tr [pEditableRow]="product">
+  <ng-template #body let-pedidosList let-editing="editing" let-ri="rowIndex">
+    <tr [pEditableRow]="pedidosList">
       <td>
-        {{ product.material }}
-      </td>
-      <td>
-        {{ product.material }}
-      </td>
-      <td>
-        {{ product.material }}
-      </td>
-      <td>
-        {{ product.material }}
+        {{ pedidosList.material }}
       </td>
       <td>
         <p-cellEditor>
           <ng-template #input>
-            <input pInputText type="text" [(ngModel)]="product.name" required />
+            <input pInputText type="text" [(ngModel)]="pedidosList.name" required />
           </ng-template>
           <ng-template #output>
-            {{ product.cantidad }}
+            {{ pedidosList.cantidad }}
           </ng-template>
         </p-cellEditor>
       </td>
       <td>
-        <p-cellEditor>
-          <ng-template #input>
-            <input pInputText type="text" [(ngModel)]="product.price" />
-          </ng-template>
-          <ng-template #output>
-            {{ product.price | currency : "USD" }}
-          </ng-template>
-        </p-cellEditor>
+        {{ pedidosList.observacion }}
+      </td>
+      <td>
+        {{ pedidosList.fechaSolicitada }}
+      </td>
+      <td>
+        {{ pedidosList.paqueteTrabajo }}
+      </td>
+      <td>
+        {{ pedidosList.tecnico }}
       </td>
       <td>
         <div class="flex items-center justify-center gap-2">
@@ -75,7 +68,7 @@
             type="button"
             pInitEditableRow
             icon="pi pi-pencil"
-            (click)="onRowEditInit(product)"
+            (click)="onRowEditInit(pedidosList)"
             text
             rounded
             severity="secondary"
@@ -87,7 +80,7 @@
             type="button"
             pSaveEditableRow
             icon="pi pi-check"
-            (click)="onRowEditSave(product)"
+            (click)="onRowEditSave(pedidosList)"
             text
             rounded
             severity="secondary"
@@ -99,7 +92,7 @@
             type="button"
             pCancelEditableRow
             icon="pi pi-times"
-            (click)="onRowEditCancel(product, ri)"
+            (click)="onRowEditCancel(pedidosList, ri)"
             text
             rounded
             severity="secondary"

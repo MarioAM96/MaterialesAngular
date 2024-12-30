@@ -5,35 +5,22 @@
   </div>
   <div *ngIf="showForm" class="form-and-list-container">
     <!-- Formulario de Pedido -->
-    <div class="order-form">
+    <div class="order-cont">
       <form (ngSubmit)="addOrder()">
         <h3>Nuevo Pedido</h3>
         <div class="form-row">
           <div class="form-group">
             <p-iftalabel class="w-full md:w-56">
-              <p-select
-                [options]="materials"
-                [(ngModel)]="newOrder.material"
-                placeholder="Seleccione un Material"
-                [editable]="true"
-                optionLabel="name"
-                optionValue="name"
-                name="material"
-                id="material"
-                class="w-full md:w-56"
-              ></p-select>
+              <p-select [options]="materials" [(ngModel)]="newOrder.material" placeholder="Seleccione un Material"
+                [editable]="true" optionLabel="name" optionValue="name" name="material" id="material"
+                class="w-full md:w-56"></p-select>
               <label for="material">Material</label>
             </p-iftalabel>
           </div>
           <div class="form-group">
             <p-iftalabel>
-              <p-inputnumber
-                [(ngModel)]="newOrder.cantidad"
-                inputId="cantidad"
-                required
-                name="cantidad"
-                id="cantidad"
-              ></p-inputnumber>
+              <p-inputnumber [(ngModel)]="newOrder.cantidad" inputId="cantidad" required name="cantidad"
+                id="cantidad"></p-inputnumber>
               <label for="cantidad">Cantidad</label>
             </p-iftalabel>
           </div>
@@ -41,25 +28,14 @@
         <div class="form-row">
           <div class="form-group">
             <p-iftalabel>
-              <input
-                pInputText
-                id="observacion"
-                [(ngModel)]="newOrder.observacion"
-                name="observacion"
-              />
+              <input pInputText id="observacion" [(ngModel)]="newOrder.observacion" name="observacion" />
               <label for="observacion">Observación</label>
             </p-iftalabel>
           </div>
           <div class="form-group">
             <p-iftalabel>
-              <p-datepicker
-                [(ngModel)]="newOrder.fechaSolicitada"
-                [iconDisplay]="'input'"
-                [showIcon]="true"
-                name="fechaSolicitada"
-                id="fechaSolicitada"
-                inputId="icondisplay"
-              />
+              <p-datepicker [(ngModel)]="newOrder.fechaSolicitada" [iconDisplay]="'input'" [showIcon]="true"
+                name="fechaSolicitada" id="fechaSolicitada" inputId="icondisplay" />
               <label for="fechaSolicitada">Fecha Solicita</label>
             </p-iftalabel>
           </div>
@@ -67,28 +43,15 @@
         <div class="form-row">
           <div class="form-group">
             <p-iftalabel>
-              <input
-                pInputText
-                id="paqueteTrabajo"
-                [(ngModel)]="newOrder.paqueteTrabajo"
-                name="paqueteTrabajo"
-              />
+              <input pInputText id="paqueteTrabajo" [(ngModel)]="newOrder.paqueteTrabajo" name="paqueteTrabajo" />
               <label for="paqueteTrabajo">Paquete de trabajo</label>
             </p-iftalabel>
           </div>
           <div class="form-group">
             <p-iftalabel class="w-full md:w-56">
-              <p-select
-                [options]="tecnicos"
-                [(ngModel)]="newOrder.tecnico"
-                placeholder="Seleccione un Técnico"
-                [editable]="true"
-                optionLabel="name"
-                optionValue="name"
-                name="tecnico"
-                id="tecnico"
-                class="w-full md:w-56"
-              ></p-select>
+              <p-select [options]="tecnicos" [(ngModel)]="newOrder.tecnico" placeholder="Seleccione un Técnico"
+                [editable]="true" optionLabel="name" optionValue="name" name="tecnico" id="tecnico"
+                class="w-full md:w-56"></p-select>
               <label for="material">Técnico Responsable</label>
             </p-iftalabel>
           </div>
@@ -97,113 +60,75 @@
           <button type="submit" class="btn submit-button">
             Agregar Pedido
           </button>
-          <button
-            type="button"
-            (click)="cancelOrder()"
-            class="btn cancel-button"
-          >
+          <button type="button" (click)="cancelOrder()" class="btn cancel-button">
             Cancelar
           </button>
         </div>
       </form>
     </div>
-
-    <!-- Lista de Pedidos NUEVA-->
-    <p-table
-      [value]="pedidosList"
-      dataKey="id"
-      editMode="row"
-      [tableStyle]="{ 'min-width': '50rem' }"
-    >
-      <ng-template #header>
-        <tr>
-          <th style="width: 20%">Material</th>
-          <th style="width: 20%">Cantidad</th>
-          <th style="width: 20%">Observación</th>
-          <th style="width: 20%">Fecha Solicitada</th>
-          <th style="width: 20%">Paquete de Trabajo</th>
-          <th style="width: 20%">Técnico</th>
-          <th style="width: 20%">Acciones</th>
-        </tr>
-      </ng-template>
-      <ng-template #body let-product let-editing="editing" let-ri="rowIndex">
-        <tr [pEditableRow]="product">
-          <td>{{ product.material }}</td>
-          <td>
-            <p-cellEditor>
-              <ng-template #input>
-                <input
-                  pInputText
-                  type="text"
-                  [(ngModel)]="product.cantidad"
-                  required
-                />
-              </ng-template>
-              <ng-template #output>
-                {{ product.cantidad }}
-              </ng-template>
-            </p-cellEditor>
-          </td>
-          <td>{{ product.observacion }}</td>
-          <td>{{ product.fechaSolicitada }}</td>
-          <td>{{ product.paqueteTrabajo }}</td>
-          <td>{{ product.tecnico }}</td>
-          <td>
-            <div class="flex items-center justify-center gap-2">
-              <button
-                *ngIf="!editing"
-                pButton
-                pRipple
-                type="button"
-                pInitEditableRow
-                icon="pi pi-pencil"
-                (click)="onRowEditInit(product)"
-                text
-                rounded
-                severity="secondary"
-              ></button>
-              <button
-                *ngIf="editing"
-                pButton
-                pRipple
-                type="button"
-                pSaveEditableRow
-                icon="pi pi-check"
-                (click)="onRowEditSave(product)"
-                text
-                rounded
-                severity="secondary"
-              ></button>
-              <button
-                *ngIf="editing"
-                pButton
-                pRipple
-                type="button"
-                pCancelEditableRow
-                icon="pi pi-times"
-                (click)="onRowEditCancel(product, ri)"
-                text
-                rounded
-                severity="secondary"
-              ></button>
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+    <div class="order-cont">
+      <p-table [value]="pedidosList" dataKey="id" editMode="row" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template #header>
+          <tr>
+            <th style="width: 20%">Material</th>
+            <th style="width: 20%">Cantidad</th>
+            <th style="width: 20%">Observación</th>
+            <th style="width: 20%">Fecha Solicitada</th>
+            <th style="width: 20%">Paquete de Trabajo</th>
+            <th style="width: 20%">Técnico</th>
+            <th style="width: 20%">Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-pedidosList let-editing="editing" let-ri="rowIndex">
+          <tr [pEditableRow]="pedidosList">
+            <td>
+              {{ pedidosList.material }}
+            </td>
+            <td>
+              <p-cellEditor>
+                <ng-template #input>
+                  <input pInputText type="number" [(ngModel)]="pedidosList.cantidad" required />
+                </ng-template>
+                <ng-template #output>
+                  {{ pedidosList.cantidad }}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+            <td>
+              {{ pedidosList.observacion }}
+            </td>
+            <td>
+              {{ pedidosList.fechaSolicitada }}
+            </td>
+            <td>
+              {{ pedidosList.paqueteTrabajo }}
+            </td>
+            <td>
+              {{ pedidosList.tecnico }}
+            </td>
+            <td>
+              <div class="flex items-center justify-center gap-2">
+                <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                  (click)="onRowEditInit(pedidosList)" text rounded severity="secondary"></button>
+                <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                  (click)="onRowEditSave(pedidosList)" text rounded severity="secondary"></button>
+                <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                  (click)="onRowEditCancel(pedidosList, ri)" text rounded severity="secondary"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div class="button-container">
+        <button pButton pRipple type="button" label="Enviar Pedidos" icon="pi pi-send" class="send-button"
+            (click)="submitOrders()">
+        </button>
+    </div>
+    </div>
   </div>
 
-  <p-table
-    #dt1
-    [value]="orders"
-    dataKey="id"
-    [rows]="10"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [loading]="loading"
-    [paginator]="true"
-    stripedRows
-    [tableStyle]="{ 'min-width': '50rem' }"
-    [globalFilterFields]="[
+  <p-table #dt1 [value]="orders" dataKey="id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading"
+    [paginator]="true" stripedRows [tableStyle]="{ 'min-width': '50rem' }" [globalFilterFields]="[
       'udf',
       'MaterialSolicitado',
       'Cantidad',
@@ -217,21 +142,14 @@
       'Fechadeentrega',
       'CantidadEntregada',
       'id'
-    ]"
-    [tableStyle]="{ 'min-width': '75rem' }"
-  >
+    ]" [tableStyle]="{ 'min-width': '75rem' }">
     <ng-template #caption>
       <div class="flex">
         <p-iconfield iconPosition="left" class="ml-auto">
           <p-inputicon>
             <i class="pi pi-search"></i>
           </p-inputicon>
-          <input
-            pInputText
-            type="text"
-            (input)="applyFilterGlobal($event, 'contains')"
-            placeholder="Buscar"
-          />
+          <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')" placeholder="Buscar" />
         </p-iconfield>
       </div>
     </ng-template>
@@ -240,17 +158,29 @@
         <th pSortableColumn="id" style="width: 22%">
           ID <p-sortIcon field="id" />
         </th>
-        <th pSortableColumn="udf" style="width: 22%">
-          UDF <p-sortIcon field="udf" />
-        </th>
-        <th pSortableColumn="Bodega" style="width: 22%">
-          Bodega <p-sortIcon field="Bodega" />
+        <th pSortableColumn="MaterialSolicitado" style="width: 22%">
+          Material Solicitado <p-sortIcon field="MaterialSolicitado" />
         </th>
         <th pSortableColumn="Cantidad" style="width: 22%">
           Cantidad <p-sortIcon field="Cantidad" />
         </th>
-        <th pSortableColumn="CantidadEntregada" style="width: 22%">
-          Cantidad Entregada <p-sortIcon field="CantidadEntregada" />
+        <th pSortableColumn="Observacion" style="width: 22%">
+          Observación <p-sortIcon field="Observacion" />
+        </th>
+        <th pSortableColumn="Fechasolicitada" style="width: 22%">
+          Fecha solicitada <p-sortIcon field="Fechasolicitada" />
+        </th>
+        <th pSortableColumn="PaquetedeTrabajo" style="width: 22%">
+          Paquete de Trabajo <p-sortIcon field="PaquetedeTrabajo" />
+        </th>
+        <th pSortableColumn="TecnicoResponsable" style="width: 22%">
+          Técnico Responsable <p-sortIcon field="TecnicoResponsable" />
+        </th>
+        <th pSortableColumn="StatusEntrega" style="width: 22%">
+          Status entrega <p-sortIcon field="StatusEntrega" />
+        </th>
+        <th pSortableColumn="Bodega" style="width: 22%">
+          Bodega <p-sortIcon field="Bodega" />
         </th>
         <th pSortableColumn="Codigo" style="width: 22%">
           Código <p-sortIcon field="Codigo" />
@@ -258,74 +188,58 @@
         <th pSortableColumn="Fechadeentrega" style="width: 22%">
           Fecha de entrega <p-sortIcon field="Fechadeentrega" />
         </th>
-        <th pSortableColumn="Fechasolicitada" style="width: 22%">
-          Fecha solicitada <p-sortIcon field="Fechasolicitada" />
+        <th pSortableColumn="CantidadEntregada" style="width: 22%">
+          Cantidad Entregada <p-sortIcon field="CantidadEntregada" />
         </th>
       </tr>
       <tr>
         <th>
-          <p-columnFilter
-            type="text"
-            field="id"
-            ariaLabel="Filter Name"
-            (input)="applyColumnFilter($event, 'id')"
-          ></p-columnFilter>
+          <p-columnFilter type="text" field="id" ariaLabel="Filter Name"
+            (input)="applyColumnFilter($event, 'id')"></p-columnFilter>
         </th>
         <th>
-          <p-columnFilter
-            type="text"
-            field="udf"
-            ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'udf')"
-          ></p-columnFilter>
+          <p-columnFilter type="text" field="MaterialSolicitado" ariaLabel="Filter Country"
+            (input)="applyColumnFilter($event, 'MaterialSolicitado')"></p-columnFilter>
         </th>
         <th>
-          <p-columnFilter
-            type="text"
-            field="Bodega"
-            ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'Bodega')"
-          ></p-columnFilter>
+          <p-columnFilter type="text" field="Cantidad" ariaLabel="Filter Country"
+            (input)="applyColumnFilter($event, 'Cantidad')"></p-columnFilter>
         </th>
         <th>
-          <p-columnFilter
-            type="text"
-            field="Cantidad"
-            ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'Cantidad')"
-          ></p-columnFilter>
+          <p-columnFilter type="text" field="Observacion" ariaLabel="Filter Country"
+            (input)="applyColumnFilter($event, 'Observacion')"></p-columnFilter>
         </th>
         <th>
-          <p-columnFilter
-            type="text"
-            field="CantidadEntregada"
-            ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'CantidadEntregada')"
-          ></p-columnFilter>
+          <p-columnFilter type="text" field="Fechasolicitada" ariaLabel="Filter Country"
+            (input)="applyColumnFilter($event, 'Fechasolicitada')"></p-columnFilter>
         </th>
         <th>
-          <p-columnFilter
-            type="text"
-            field="Codigo"
-            ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'Codigo')"
-          ></p-columnFilter>
+          <p-columnFilter type="text" field="PaquetedeTrabajo" ariaLabel="Filter Country"
+            (input)="applyColumnFilter($event, 'PaquetedeTrabajo')"></p-columnFilter>
         </th>
         <th>
-          <p-columnFilter
-            type="text"
-            field="Fechadeentrega"
-            ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'Fechadeentrega')"
-          ></p-columnFilter>
+          <p-columnFilter type="text" field="TecnicoResponsable" ariaLabel="Filter Country"
+            (input)="applyColumnFilter($event, 'TecnicoResponsable')"></p-columnFilter>
         </th>
         <th>
-          <p-columnFilter
-            type="text"
-            field="Fechasolicitada"
-            ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'Fechasolicitada')"
-          ></p-columnFilter>
+          <p-columnFilter type="text" field="StatusEntrega" ariaLabel="Filter Country"
+            (input)="applyColumnFilter($event, 'StatusEntrega')"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="Bodega" ariaLabel="Filter Country"
+            (input)="applyColumnFilter($event, 'Bodega')"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="Codigo" ariaLabel="Filter Country"
+            (input)="applyColumnFilter($event, 'Codigo')"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="Fechadeentrega" ariaLabel="Filter Country"
+            (input)="applyColumnFilter($event, 'Fechadeentrega')"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="CantidadEntregada" ariaLabel="Filter Country"
+            (input)="applyColumnFilter($event, 'CantidadEntregada')"></p-columnFilter>
         </th>
       </tr>
     </ng-template>
@@ -335,16 +249,28 @@
           {{ orders.id }}
         </td>
         <td>
-          {{ orders.udf }}
-        </td>
-        <td>
-          {{ orders.Bodega }}
+          {{ orders.MaterialSolicitado }}
         </td>
         <td>
           {{ orders.Cantidad }}
         </td>
         <td>
-          {{ orders.CantidadEntregada }}
+          {{ orders.Observacion }}
+        </td>
+        <td>
+          {{ orders.Fechasolicitada }}
+        </td>
+        <td>
+          {{ orders.PaquetedeTrabajo }}
+        </td>
+        <td>
+          {{ orders.TecnicoResponsable }}
+        </td>
+        <td>
+          {{ orders.StatusEntrega }}
+        </td>
+        <td>
+          {{ orders.Bodega }}
         </td>
         <td>
           {{ orders.Codigo }}
@@ -353,7 +279,7 @@
           {{ orders.Fechadeentrega }}
         </td>
         <td>
-          {{ orders.Fechasolicitada }}
+          {{ orders.CantidadEntregada }}
         </td>
       </tr>
     </ng-template>

@@ -1,51 +1,29 @@
 import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular';
-import { AllCommunityModule, ColDef, ModuleRegistry } from 'ag-grid-community';
 import { ApiService } from '../../services/api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ActiveSheetService } from '../../services/activesheet.service';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ImportsModule } from '../../imports';
 import { forkJoin } from 'rxjs';
 import { Order } from '../../models/order.model';
 import { IftaLabelModule } from 'primeng/iftalabel';
-import { Table } from 'primeng/table'
-
-
-ModuleRegistry.registerModules([AllCommunityModule]);
-
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-orders',
-  imports: [
-    HttpClientModule,
-    FormsModule,
-    CommonModule,
-    ImportsModule,
-    IftaLabelModule,
-  ],
+  imports: [HttpClientModule, CommonModule, ImportsModule, IftaLabelModule],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.scss',
   providers: [ApiService],
 })
 export class OrdersComponent implements OnInit, AfterViewInit {
+  @ViewChild('dt1') dt1: Table | undefined;
+
   selectedOrder: Order | undefined;
   clonedProducts: { [s: string]: any } = {};
   loading: boolean = true;
-  
-  @ViewChild('myGrid') myGrid!: AgGridAngular;
-  @ViewChild('dt1') dt1: Table | undefined;
   orders!: Order[];
-
-  public rowData: any[] | null = null;
   public rowDataMaterials: any[] | null = null;
   public rowDataTecnicos: any[] | null = null;
-
-  public defaultColDef: ColDef = {
-    filter: 'agTextColumnFilter',
-    floatingFilter: true,
-  };
-
   public showForm = false;
   newOrder = {
     material: '',
@@ -57,7 +35,6 @@ export class OrdersComponent implements OnInit, AfterViewInit {
   };
   public materials: { name: string; value: string }[] = [];
   public tecnicos: { name: string; value: string }[] = [];
-
   pedidosList: {
     material: string;
     cantidad: number | null;
@@ -68,6 +45,11 @@ export class OrdersComponent implements OnInit, AfterViewInit {
   }[] = [];
 
   addOrder() {
+    if (this.newOrder.fechaSolicitada) {
+      const fecha = new Date(this.newOrder.fechaSolicitada);
+      this.newOrder.fechaSolicitada = fecha.toISOString().split('T')[0];
+    }
+  
     this.pedidosList.push({ ...this.newOrder });
     this.newOrder = {
       material: '',
@@ -78,9 +60,9 @@ export class OrdersComponent implements OnInit, AfterViewInit {
       tecnico: '',
     };
   }
+  
 
   cancelOrder() {
-    // Limpiar el formulario
     this.newOrder = {
       material: '',
       cantidad: null,
@@ -89,21 +71,13 @@ export class OrdersComponent implements OnInit, AfterViewInit {
       paqueteTrabajo: '',
       tecnico: '',
     };
-
-    // Vaciar la lista de pedidos
     this.pedidosList = [];
-
-    // Ocultar el formulario
     this.showForm = false;
   }
 
-  constructor(
-    private apiService: ApiService,
-    private activeSheetService: ActiveSheetService
-  ) {}
+  constructor(private apiService: ApiService) {}
 
   ngOnInit() {
-    const activeSheetId = sessionStorage.getItem('activeSheetId');
     this.getOrders();
     this.getMaterials();
     this.getTecnicos();
@@ -181,7 +155,6 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 
     forkJoin(requests).subscribe(
       (responses) => {
-        console.log('All orders added successfully:', responses);
         this.getOrders();
         this.pedidosList = [];
         this.showForm = false;
@@ -197,28 +170,27 @@ export class OrdersComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit() {
-    console.log('Nuevo pedido:', this.newOrder);
     this.showForm = false;
   }
 
-  onRowEditInit(product: any) {
-    this.clonedProducts[product.id] = { ...product }; // Guardar la fila original
+  onRowEditInit(pedidosList: any) {
+    this.clonedProducts[pedidosList.id] = { ...pedidosList };
   }
 
-  // Guarda la edición de una fila
-  onRowEditSave(product: any) {
-    // Aquí puedes agregar cualquier lógica de validación o guardar los cambios
-    delete this.clonedProducts[product.id]; // Elimina el estado clonado porque ya se guardó
+  onRowEditSave(pedidosList: any) {
+    delete this.clonedProducts[pedidosList.id];
   }
 
-  // Cancela la edición de una fila y restaura el valor original
-  onRowEditCancel(product: any, index: number) {
-    this.pedidosList[index] = { ...this.clonedProducts[product.id] }; // Restaurar el valor original
-    delete this.clonedProducts[product.id]; // Eliminar el clon
+  onRowEditCancel(pedidosList: any, index: number) {
+    this.pedidosList[index] = { ...this.clonedProducts[pedidosList.id] };
+    delete this.clonedProducts[pedidosList.id];
   }
 
   applyFilterGlobal($event: any, stringVal: any) {
-    this.dt1!.filterGlobal(($event.target as HTMLInputElement).value, stringVal);
+    this.dt1!.filterGlobal(
+      ($event.target as HTMLInputElement).value,
+      stringVal
+    );
   }
   applyColumnFilter(event: Event, field: string) {
     const value = (event.target as HTMLInputElement).value;
