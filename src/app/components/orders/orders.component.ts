@@ -1,19 +1,26 @@
 import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { HttpClientModule } from '@angular/common/http';
-import { ActiveSheetService } from '../../services/activesheet.service';
 import { CommonModule } from '@angular/common';
 import { ImportsModule } from '../../imports';
 import { forkJoin } from 'rxjs';
 import { Order } from '../../models/order.model';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { Table } from 'primeng/table';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'app-orders',
-  imports: [HttpClientModule, CommonModule, ImportsModule, IftaLabelModule],
+  imports: [
+    HttpClientModule,
+    CommonModule,
+    ImportsModule,
+    IftaLabelModule,
+    ToastModule,
+  ],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.scss',
-  providers: [ApiService],
+  providers: [ApiService, MessageService],
 })
 export class OrdersComponent implements OnInit, AfterViewInit {
   @ViewChild('dt1') dt1: Table | undefined;
@@ -49,7 +56,7 @@ export class OrdersComponent implements OnInit, AfterViewInit {
       const fecha = new Date(this.newOrder.fechaSolicitada);
       this.newOrder.fechaSolicitada = fecha.toISOString().split('T')[0];
     }
-  
+
     this.pedidosList.push({ ...this.newOrder });
     this.newOrder = {
       material: '',
@@ -60,7 +67,6 @@ export class OrdersComponent implements OnInit, AfterViewInit {
       tecnico: '',
     };
   }
-  
 
   cancelOrder() {
     this.newOrder = {
@@ -75,7 +81,10 @@ export class OrdersComponent implements OnInit, AfterViewInit {
     this.showForm = false;
   }
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit() {
     this.getOrders();
@@ -138,6 +147,7 @@ export class OrdersComponent implements OnInit, AfterViewInit {
   }
 
   submitOrders() {
+    this.loading = true;
     const payloads = this.pedidosList.map((order) => ({
       unuse: '',
       material: order.material,
@@ -158,8 +168,19 @@ export class OrdersComponent implements OnInit, AfterViewInit {
         this.getOrders();
         this.pedidosList = [];
         this.showForm = false;
+        this.loading = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Pedido ingresado',
+        });
       },
       (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Ocurrió un problema al enviar los pedidos.',
+        });
         console.error('Error adding orders:', error);
       }
     );

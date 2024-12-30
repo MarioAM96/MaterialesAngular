@@ -1,113 +1,64 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSelectModule } from '@angular/material/select';
-import {
-  DragDropModule,
-  CdkDragDrop,
-  moveItemInArray,
-} from '@angular/cdk/drag-drop';
+import { ImportsModule } from '../../imports';
 import { FormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { AddUsersComponent } from '../add-users/add-users.component';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { ApiService } from '../../services/api.service';
 import { Usuario } from '../../models/usuario.model';
+import { Table } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { Dialog } from 'primeng/dialog';
+import { PasswordModule } from 'primeng/password';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-usuarios',
+  standalone: true,
   imports: [
     CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatCheckboxModule,
-    MatSelectModule,
-    DragDropModule,
     HttpClientModule,
     FormsModule,
-    MatDialogModule,
-    MatIconModule,
-  ],
-  providers: [ApiService],
+    ImportsModule,
+    Dialog,
+    ButtonModule,
+    InputTextModule,
+    PasswordModule,
+    ToastModule
+],
+  providers: [ApiService, MessageService],
   templateUrl: './usuarios.component.html',
   styleUrl: './usuarios.component.scss',
 })
-export class UsuariosComponent {
-  allColumns = [
-    { name: 'ID', property: 'id', visible: true },
-    { name: 'Nombre', property: 'Nombre', visible: true },
-    { name: 'Rol', property: 'Rol', visible: true },
-    { name: 'Password', property: 'Password', visible: true },
-  ];
+export class UsuariosComponent implements OnInit {
+  @ViewChild('dt3') dt3: Table | undefined;
   ApiService: any;
-
+  users!: Usuario[];
+  visible: boolean = false;
+  loading: boolean = true;
   columnFilter: string = '';
-  dataSource = new MatTableDataSource<Usuario>([]);
-
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  constructor(
-    private http: HttpClient,
-    private dialog: MatDialog,
-    private apiService: ApiService
-  ) {}
+  value!: string;
+  rols: any[] | undefined;
+  user = {
+    Nombre: '',
+    Rol: '',
+    Password: ''
+  };
+  constructor(private http: HttpClient, private apiService: ApiService, private messageService: MessageService) {}
 
   ngOnInit(): void {
     this.getUsersFromApi();
-    this.dataSource.filterPredicate = (data: Usuario, filter: string) => {
-      const dataStr = Object.values(data).join(' ').toLowerCase(); // Convertir todos los valores de la fila a texto
-      // Normalizar los datos y el filtro antes de compararlos
-      const normalizedDataStr = this.removeTildes(dataStr);
-      const normalizedFilter = this.removeTildes(filter);
-      return normalizedDataStr.includes(normalizedFilter); // Comparar sin tildes
-    };
+    this.rols = ['Técnico','Administrador'];
   }
 
-  ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    const normalizedFilterValue = this.removeTildes(filterValue).trim().toLowerCase();
-    this.dataSource.filter = normalizedFilterValue;
-  }
-  
-  removeTildes(str: string): string {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');  // Elimina los caracteres diacríticos
-  }
-  
-  get displayedColumns(): string[] {
-    return this.allColumns
-      .filter((column) => column.visible)
-      .map((column) => column.property);
-  }
+  ngAfterViewInit() {}
 
   getUsersFromApi(): void {
     this.apiService.getUsers().subscribe(
       (data: any[]) => {
-        const mappedData = data.map((item) => ({
-          id: item.id,
-          Nombre: item['Nombre'],
-          Rol: item['Rol'],
-          Password: item['Password'],
-        }));
-        this.dataSource.data = mappedData;
+        this.users = data;
+        this.loading = false;
       },
       (error) => {
         console.error('Error al obtener los usuarios:', error);
@@ -115,30 +66,80 @@ export class UsuariosComponent {
     );
   }
 
-  toggleAllColumns(visible: boolean) {
-    this.allColumns.forEach((column) => (column.visible = visible));
+  showDialog() {
+    this.visible = true;
   }
 
-  filteredColumns() {
-    return this.allColumns.filter((column) =>
-      column.name.toLowerCase().includes(this.columnFilter.toLowerCase())
+  applyFilterGlobal($event: any, stringVal: any) {
+    this.dt3!.filterGlobal(
+      ($event.target as HTMLInputElement).value,
+      stringVal
     );
   }
-
-  drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.allColumns, event.previousIndex, event.currentIndex);
+  applyColumnFilter(event: Event, field: string) {
+    const value = (event.target as HTMLInputElement).value;
+    this.dt3!.filter(value, field, 'contains');
   }
 
-  addUser() {
-    const dialogRef = this.dialog.open(AddUsersComponent, {
-      width: '400px',
-      panelClass: 'custom-dialog',
-    });
-
-    dialogRef.afterClosed().subscribe((result: Usuario) => {
-      if (result) {
-        this.dataSource.data = [...this.dataSource.data, result]; // Añade el nuevo usuario a la tabla
+  save() {
+    if (!this.user.Nombre || !this.user.Rol || !this.user.Password) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'Por favor completa todos los campos.',
+      });
+      return;
+    }
+  
+    this.loading = true;
+    const payload = {
+      userName: this.user.Nombre.trim(),
+      accountType: this.user.Rol,
+      password: this.user.Password,
+    };
+  
+    this.apiService.addUser(payload).subscribe(
+      (response: any) => {
+        this.loading = false;
+        if (response.status) {
+          this.visible = false;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Usuario creado exitosamente.',
+          });
+          this.getUsersFromApi(); // Refresca la lista de usuarios
+          this.resetForm();
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: response.message || 'Ocurrió un problema al crear el usuario.',
+          });
+        }
+      },
+      (error: any) => {
+        this.loading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al crear el usuario. Intenta nuevamente más tarde.',
+        });
+        console.error('Error al agregar usuario:', error);
       }
-    });
+    );
+  }
+  
+  resetForm() {
+    this.user = {
+      Nombre: '',
+      Rol: '',
+      Password: ''
+    };
+  }
+
+  cancel() {
+    this.resetForm();
+    this.visible = false;
   }
 }

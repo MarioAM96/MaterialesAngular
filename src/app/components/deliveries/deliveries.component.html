@@ -1,132 +1,173 @@
-<div class="container-fluid mt-4">
-    <div class="header">
-      <h1>ENTREGAS</h1>
-      <button class="gestionar-button" (click)="toggleStepper()">+ Gestionar</button>
-    </div>
-  
-    <!-- Conditionally display the form container -->
-    <div class="form-container" *ngIf="showStepper">
-      <mat-horizontal-stepper [linear]="isLinear" #stepper>
-        <mat-step [stepControl]="firstFormGroup">
-          <form [formGroup]="firstFormGroup">
-            <ng-template matStepLabel>Información del Material</ng-template>
-            <div class="form-row">
-              <div class="form-group">
-                <mat-form-field appearance="fill">
-                  <mat-label>Material</mat-label>
-                  <mat-select formControlName="material">
-                    <mat-option *ngFor="let material of materials" [value]="material.value">
-                      {{ material.name }}
-                    </mat-option>
-                  </mat-select>
-                  <mat-error *ngIf="firstFormGroup.get('material')?.hasError('required')">
-                    El material es requerido
-                  </mat-error>
-                </mat-form-field>
-              </div>
-  
-              <div class="form-group">
-                <mat-form-field appearance="fill">
-                  <mat-label>Cantidad</mat-label>
-                  <input matInput formControlName="cantidad" type="number" min="1" />
-                  <mat-error *ngIf="firstFormGroup.get('cantidad')?.hasError('required')">
-                    La cantidad es requerida
-                  </mat-error>
-                  <mat-error *ngIf="firstFormGroup.get('cantidad')?.hasError('min')">
-                    La cantidad debe ser mayor a cero
-                  </mat-error>
-                </mat-form-field>
-              </div>
-  
-              <div class="form-group">
-                <mat-form-field appearance="fill">
-                  <mat-label>Observación</mat-label>
-                  <input matInput formControlName="observacion" />
-                </mat-form-field>
-              </div>
-            </div>
-  
-            <div class="button-container">
-              <button mat-button matStepperNext [disabled]="firstFormGroup.invalid">Siguiente</button>
-            </div>
-          </form>
-        </mat-step>
-  
-        <mat-step [stepControl]="secondFormGroup">
-          <form [formGroup]="secondFormGroup">
-            <ng-template matStepLabel>Información Adicional</ng-template>
-            <div class="form-row">
-              <div class="form-group">
-                <mat-form-field appearance="fill">
-                  <mat-label>Fecha Solicitada</mat-label>
-                  <input matInput formControlName="fechaSolicitada" [matDatepicker]="picker" />
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker></mat-datepicker>
-                  <mat-error *ngIf="secondFormGroup.get('fechaSolicitada')?.hasError('required')">
-                    La fecha es requerida
-                  </mat-error>
-                </mat-form-field>
-              </div>
-  
-              <div class="form-group">
-                <mat-form-field appearance="fill">
-                  <mat-label>Paquete de Trabajo</mat-label>
-                  <input matInput formControlName="paqueteTrabajo" />
-                  <mat-error *ngIf="secondFormGroup.get('paqueteTrabajo')?.hasError('required')">
-                    El paquete de trabajo es requerido
-                  </mat-error>
-                </mat-form-field>
-              </div>
-            </div>
-  
-            <div class="button-container">
-              <button mat-button matStepperPrevious>Anterior</button>
-              <button mat-button matStepperNext [disabled]="secondFormGroup.invalid">Siguiente</button>
-            </div>
-          </form>
-        </mat-step>
-  
-        <mat-step [stepControl]="thirdFormGroup">
-          <form [formGroup]="thirdFormGroup">
-            <ng-template matStepLabel>Asignación de Técnico</ng-template>
-            <div class="form-row">
-              <div class="form-group">
-                <mat-form-field appearance="fill">
-                  <mat-label>Técnico Responsable</mat-label>
-                  <mat-select formControlName="tecnico">
-                    <mat-option *ngFor="let tecnico of tecnicos" [value]="tecnico.value">
-                      {{ tecnico.name }}
-                    </mat-option>
-                  </mat-select>
-                  <mat-error *ngIf="thirdFormGroup.get('tecnico')?.hasError('required')">
-                    El técnico es requerido
-                  </mat-error>
-                </mat-form-field>
-              </div>
-            </div>
-  
-            <div class="button-container">
-              <button mat-button matStepperPrevious>Anterior</button>
-              <button mat-button (click)="onSubmit()" [disabled]="thirdFormGroup.invalid">Finalizar</button>
-            </div>
-          </form>
-        </mat-step>
-      </mat-horizontal-stepper>
-    </div>
-  
-    <div class="grid-container">
-      <ag-grid-angular
-        #myGrid
-        style="width: 100%; height: 100%;"
-        [rowData]="rowData"
-        [columnDefs]="columnDefs"
-        [defaultColDef]="defaultColDef"
-        [rowSelection]="rowSelection"
-        [pagination]="true"
-        [paginationPageSize]="paginationPageSize"
-        [paginationPageSizeSelector]="paginationPageSizeSelector"
-        [enableCellTextSelection]="true"
-      >
-      </ag-grid-angular>
-    </div>
+<div class="header-container">
+  <h2 class="project-title">Entregas</h2>
+  <button class="btn create-button">Gestionar</button>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <p-toast></p-toast>
+
+    <p-table #dt4 [value]="deliveries" dataKey="id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading"
+      [paginator]="true" stripedRows [tableStyle]="{ 'min-width': '50rem' }" [globalFilterFields]="[
+        'udf',
+        'MaterialSolicitado',
+        'Cantidad',
+        'Observacion',
+        'Fechasolicitada',
+        'PaquetedeTrabajo',
+        'TecnicoResponsable',
+        'StatusEntrega',
+        'Bodega',
+        'Codigo',
+        'Fechadeentrega',
+        'CantidadEntregada',
+        'id'
+      ]" [tableStyle]="{ 'min-width': '75rem' }">
+      <ng-template #caption>
+        <div class="flex">
+          <p-iconfield iconPosition="left" class="ml-auto">
+            <p-inputicon>
+              <i class="pi pi-search"></i>
+            </p-inputicon>
+            <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')" placeholder="Buscar" />
+          </p-iconfield>
+        </div>
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="id" style="width: 22%">
+            ID <p-sortIcon field="id" />
+          </th>
+          <th pSortableColumn="MaterialSolicitado" style="width: 22%">
+            Material Solicitado <p-sortIcon field="MaterialSolicitado" />
+          </th>
+          <th pSortableColumn="Cantidad" style="width: 22%">
+            Cantidad <p-sortIcon field="Cantidad" />
+          </th>
+          <th pSortableColumn="Observacion" style="width: 22%">
+            Observación <p-sortIcon field="Observacion" />
+          </th>
+          <th pSortableColumn="Fechasolicitada" style="width: 22%">
+            Fecha solicitada <p-sortIcon field="Fechasolicitada" />
+          </th>
+          <th pSortableColumn="PaquetedeTrabajo" style="width: 22%">
+            Paquete de Trabajo <p-sortIcon field="PaquetedeTrabajo" />
+          </th>
+          <th pSortableColumn="TecnicoResponsable" style="width: 22%">
+            Técnico Responsable <p-sortIcon field="TecnicoResponsable" />
+          </th>
+          <th pSortableColumn="StatusEntrega" style="width: 22%">
+            Status entrega <p-sortIcon field="StatusEntrega" />
+          </th>
+          <th pSortableColumn="Bodega" style="width: 22%">
+            Bodega <p-sortIcon field="Bodega" />
+          </th>
+          <th pSortableColumn="Codigo" style="width: 22%">
+            Código <p-sortIcon field="Codigo" />
+          </th>
+          <th pSortableColumn="Fechadeentrega" style="width: 22%">
+            Fecha de entrega <p-sortIcon field="Fechadeentrega" />
+          </th>
+          <th pSortableColumn="CantidadEntregada" style="width: 22%">
+            Cantidad Entregada <p-sortIcon field="CantidadEntregada" />
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <p-columnFilter type="text" field="id" ariaLabel="Filter Name"
+              (input)="applyColumnFilter($event, 'id')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="MaterialSolicitado" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'MaterialSolicitado')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Cantidad" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Cantidad')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Observacion" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Observacion')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Fechasolicitada" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Fechasolicitada')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="PaquetedeTrabajo" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'PaquetedeTrabajo')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="TecnicoResponsable" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'TecnicoResponsable')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="StatusEntrega" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'StatusEntrega')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Bodega" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Bodega')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Codigo" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Codigo')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Fechadeentrega" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Fechadeentrega')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="CantidadEntregada" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'CantidadEntregada')"></p-columnFilter>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-deliveries>
+        <tr>
+          <td>
+            {{ deliveries.id }}
+          </td>
+          <td>
+            {{ deliveries.MaterialSolicitado }}
+          </td>
+          <td>
+            {{ deliveries.Cantidad }}
+          </td>
+          <td>
+            {{ deliveries.Observacion }}
+          </td>
+          <td>
+            {{ deliveries.Fechasolicitada }}
+          </td>
+          <td>
+            {{ deliveries.PaquetedeTrabajo }}
+          </td>
+          <td>
+            {{ deliveries.TecnicoResponsable }}
+          </td>
+          <td>
+            {{ deliveries.StatusEntrega }}
+          </td>
+          <td>
+            {{ deliveries.Bodega }}
+          </td>
+          <td>
+            {{ deliveries.Codigo }}
+          </td>
+          <td>
+            {{ deliveries.Fechadeentrega }}
+          </td>
+          <td>
+            {{ deliveries.CantidadEntregada }}
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="12">No se encontraron registros.</td>
+        </tr>
+      </ng-template>
+    </p-table>
   </div>
+</div>

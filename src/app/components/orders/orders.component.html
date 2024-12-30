@@ -1,13 +1,14 @@
 <div class="container-fluid mt-4">
   <div class="header">
-    <h1>PEDIDOS</h1>
+    <h2 class="project-title">PEDIDOS</h2>
     <button (click)="toggleForm()" class="btn create-button">+ Crear</button>
   </div>
+  <p-toast></p-toast>
   <div *ngIf="showForm" class="form-and-list-container">
     <!-- Formulario de Pedido -->
-    <div class="order-cont">
+    <div class="card form-card">
+      <h3>Nuevo Pedido</h3>
       <form (ngSubmit)="addOrder()">
-        <h3>Nuevo Pedido</h3>
         <div class="form-row">
           <div class="form-group">
             <p-iftalabel class="w-full md:w-56">
@@ -36,7 +37,7 @@
             <p-iftalabel>
               <p-datepicker [(ngModel)]="newOrder.fechaSolicitada" [iconDisplay]="'input'" [showIcon]="true"
                 name="fechaSolicitada" id="fechaSolicitada" inputId="icondisplay" />
-              <label for="fechaSolicitada">Fecha Solicita</label>
+              <label for="fechaSolicitada">Fecha Solicitada</label>
             </p-iftalabel>
           </div>
         </div>
@@ -52,7 +53,7 @@
               <p-select [options]="tecnicos" [(ngModel)]="newOrder.tecnico" placeholder="Seleccione un Técnico"
                 [editable]="true" optionLabel="name" optionValue="name" name="tecnico" id="tecnico"
                 class="w-full md:w-56"></p-select>
-              <label for="material">Técnico Responsable</label>
+              <label for="tecnico">Técnico Responsable</label>
             </p-iftalabel>
           </div>
         </div>
@@ -66,7 +67,8 @@
         </div>
       </form>
     </div>
-    <div class="order-cont">
+    <div class="card list-card">
+      <h3>Lista de Pedidos</h3>
       <p-table [value]="pedidosList" dataKey="id" editMode="row" [tableStyle]="{ 'min-width': '50rem' }">
         <ng-template #header>
           <tr>
@@ -123,170 +125,173 @@
         <button pButton pRipple type="button" label="Enviar Pedidos" icon="pi pi-send" class="send-button"
             (click)="submitOrders()">
         </button>
-    </div>
+      </div>
     </div>
   </div>
 
-  <p-table #dt1 [value]="orders" dataKey="id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading"
-    [paginator]="true" stripedRows [tableStyle]="{ 'min-width': '50rem' }" [globalFilterFields]="[
-      'udf',
-      'MaterialSolicitado',
-      'Cantidad',
-      'Observacion',
-      'Fechasolicitada',
-      'PaquetedeTrabajo',
-      'TecnicoResponsable',
-      'StatusEntrega',
-      'Bodega',
-      'Codigo',
-      'Fechadeentrega',
-      'CantidadEntregada',
-      'id'
-    ]" [tableStyle]="{ 'min-width': '75rem' }">
-    <ng-template #caption>
-      <div class="flex">
-        <p-iconfield iconPosition="left" class="ml-auto">
-          <p-inputicon>
-            <i class="pi pi-search"></i>
-          </p-inputicon>
-          <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')" placeholder="Buscar" />
-        </p-iconfield>
-      </div>
-    </ng-template>
-    <ng-template #header>
-      <tr>
-        <th pSortableColumn="id" style="width: 22%">
-          ID <p-sortIcon field="id" />
-        </th>
-        <th pSortableColumn="MaterialSolicitado" style="width: 22%">
-          Material Solicitado <p-sortIcon field="MaterialSolicitado" />
-        </th>
-        <th pSortableColumn="Cantidad" style="width: 22%">
-          Cantidad <p-sortIcon field="Cantidad" />
-        </th>
-        <th pSortableColumn="Observacion" style="width: 22%">
-          Observación <p-sortIcon field="Observacion" />
-        </th>
-        <th pSortableColumn="Fechasolicitada" style="width: 22%">
-          Fecha solicitada <p-sortIcon field="Fechasolicitada" />
-        </th>
-        <th pSortableColumn="PaquetedeTrabajo" style="width: 22%">
-          Paquete de Trabajo <p-sortIcon field="PaquetedeTrabajo" />
-        </th>
-        <th pSortableColumn="TecnicoResponsable" style="width: 22%">
-          Técnico Responsable <p-sortIcon field="TecnicoResponsable" />
-        </th>
-        <th pSortableColumn="StatusEntrega" style="width: 22%">
-          Status entrega <p-sortIcon field="StatusEntrega" />
-        </th>
-        <th pSortableColumn="Bodega" style="width: 22%">
-          Bodega <p-sortIcon field="Bodega" />
-        </th>
-        <th pSortableColumn="Codigo" style="width: 22%">
-          Código <p-sortIcon field="Codigo" />
-        </th>
-        <th pSortableColumn="Fechadeentrega" style="width: 22%">
-          Fecha de entrega <p-sortIcon field="Fechadeentrega" />
-        </th>
-        <th pSortableColumn="CantidadEntregada" style="width: 22%">
-          Cantidad Entregada <p-sortIcon field="CantidadEntregada" />
-        </th>
-      </tr>
-      <tr>
-        <th>
-          <p-columnFilter type="text" field="id" ariaLabel="Filter Name"
-            (input)="applyColumnFilter($event, 'id')"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="MaterialSolicitado" ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'MaterialSolicitado')"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="Cantidad" ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'Cantidad')"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="Observacion" ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'Observacion')"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="Fechasolicitada" ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'Fechasolicitada')"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="PaquetedeTrabajo" ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'PaquetedeTrabajo')"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="TecnicoResponsable" ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'TecnicoResponsable')"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="StatusEntrega" ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'StatusEntrega')"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="Bodega" ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'Bodega')"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="Codigo" ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'Codigo')"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="Fechadeentrega" ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'Fechadeentrega')"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="CantidadEntregada" ariaLabel="Filter Country"
-            (input)="applyColumnFilter($event, 'CantidadEntregada')"></p-columnFilter>
-        </th>
-      </tr>
-    </ng-template>
-    <ng-template #body let-orders>
-      <tr>
-        <td>
-          {{ orders.id }}
-        </td>
-        <td>
-          {{ orders.MaterialSolicitado }}
-        </td>
-        <td>
-          {{ orders.Cantidad }}
-        </td>
-        <td>
-          {{ orders.Observacion }}
-        </td>
-        <td>
-          {{ orders.Fechasolicitada }}
-        </td>
-        <td>
-          {{ orders.PaquetedeTrabajo }}
-        </td>
-        <td>
-          {{ orders.TecnicoResponsable }}
-        </td>
-        <td>
-          {{ orders.StatusEntrega }}
-        </td>
-        <td>
-          {{ orders.Bodega }}
-        </td>
-        <td>
-          {{ orders.Codigo }}
-        </td>
-        <td>
-          {{ orders.Fechadeentrega }}
-        </td>
-        <td>
-          {{ orders.CantidadEntregada }}
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template #emptymessage>
-      <tr>
-        <td colspan="5">No se encontraron registros.</td>
-      </tr>
-    </ng-template>
-  </p-table>
+  <div class="card">
+    <h3>Historial de Pedidos</h3>
+    <p-table #dt1 [value]="orders" dataKey="id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading"
+      [paginator]="true" stripedRows [tableStyle]="{ 'min-width': '50rem' }" [globalFilterFields]="[
+        'udf',
+        'MaterialSolicitado',
+        'Cantidad',
+        'Observacion',
+        'Fechasolicitada',
+        'PaquetedeTrabajo',
+        'TecnicoResponsable',
+        'StatusEntrega',
+        'Bodega',
+        'Codigo',
+        'Fechadeentrega',
+        'CantidadEntregada',
+        'id'
+      ]" [tableStyle]="{ 'min-width': '75rem' }">
+      <ng-template #caption>
+        <div class="flex">
+          <p-iconfield iconPosition="left" class="ml-auto">
+            <p-inputicon>
+              <i class="pi pi-search"></i>
+            </p-inputicon>
+            <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')" placeholder="Buscar" />
+          </p-iconfield>
+        </div>
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="id" style="width: 22%">
+            ID <p-sortIcon field="id" />
+          </th>
+          <th pSortableColumn="MaterialSolicitado" style="width: 22%">
+            Material Solicitado <p-sortIcon field="MaterialSolicitado" />
+          </th>
+          <th pSortableColumn="Cantidad" style="width: 22%">
+            Cantidad <p-sortIcon field="Cantidad" />
+          </th>
+          <th pSortableColumn="Observacion" style="width: 22%">
+            Observación <p-sortIcon field="Observacion" />
+          </th>
+          <th pSortableColumn="Fechasolicitada" style="width: 22%">
+            Fecha solicitada <p-sortIcon field="Fechasolicitada" />
+          </th>
+          <th pSortableColumn="PaquetedeTrabajo" style="width: 22%">
+            Paquete de Trabajo <p-sortIcon field="PaquetedeTrabajo" />
+          </th>
+          <th pSortableColumn="TecnicoResponsable" style="width: 22%">
+            Técnico Responsable <p-sortIcon field="TecnicoResponsable" />
+          </th>
+          <th pSortableColumn="StatusEntrega" style="width: 22%">
+            Status entrega <p-sortIcon field="StatusEntrega" />
+          </th>
+          <th pSortableColumn="Bodega" style="width: 22%">
+            Bodega <p-sortIcon field="Bodega" />
+          </th>
+          <th pSortableColumn="Codigo" style="width: 22%">
+            Código <p-sortIcon field="Codigo" />
+          </th>
+          <th pSortableColumn="Fechadeentrega" style="width: 22%">
+            Fecha de entrega <p-sortIcon field="Fechadeentrega" />
+          </th>
+          <th pSortableColumn="CantidadEntregada" style="width: 22%">
+            Cantidad Entregada <p-sortIcon field="CantidadEntregada" />
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <p-columnFilter type="text" field="id" ariaLabel="Filter Name"
+              (input)="applyColumnFilter($event, 'id')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="MaterialSolicitado" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'MaterialSolicitado')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Cantidad" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Cantidad')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Observacion" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Observacion')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Fechasolicitada" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Fechasolicitada')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="PaquetedeTrabajo" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'PaquetedeTrabajo')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="TecnicoResponsable" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'TecnicoResponsable')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="StatusEntrega" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'StatusEntrega')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Bodega" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Bodega')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Codigo" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Codigo')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Fechadeentrega" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'Fechadeentrega')"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="CantidadEntregada" ariaLabel="Filter Country"
+              (input)="applyColumnFilter($event, 'CantidadEntregada')"></p-columnFilter>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-orders>
+        <tr>
+          <td>
+            {{ orders.id }}
+          </td>
+          <td>
+            {{ orders.MaterialSolicitado }}
+          </td>
+          <td>
+            {{ orders.Cantidad }}
+          </td>
+          <td>
+            {{ orders.Observacion }}
+          </td>
+          <td>
+            {{ orders.Fechasolicitada }}
+          </td>
+          <td>
+            {{ orders.PaquetedeTrabajo }}
+          </td>
+          <td>
+            {{ orders.TecnicoResponsable }}
+          </td>
+          <td>
+            {{ orders.StatusEntrega }}
+          </td>
+          <td>
+            {{ orders.Bodega }}
+          </td>
+          <td>
+            {{ orders.Codigo }}
+          </td>
+          <td>
+            {{ orders.Fechadeentrega }}
+          </td>
+          <td>
+            {{ orders.CantidadEntregada }}
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="12">No se encontraron registros.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </div>
