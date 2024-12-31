@@ -1,14 +1,5 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular';
 import { ApiService } from '../../services/api.service';
-import { ActiveSheetService } from '../../services/activesheet.service';
-import {
-  FormsModule,
-  ReactiveFormsModule,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
@@ -16,80 +7,80 @@ import { ToastModule } from 'primeng/toast';
 import { Deliveries } from '../../models/deliveries.model';
 import { Table } from 'primeng/table';
 import { ImportsModule } from '../../imports';
+import { AccordionModule } from 'primeng/accordion';
+import { Order } from '../../models/order.model';
+import { FormsModule } from '@angular/forms';
 
+import { IftaLabelModule } from 'primeng/iftalabel';
 
 @Component({
   selector: 'app-deliveries',
   templateUrl: './deliveries.component.html',
   styleUrls: ['./deliveries.component.scss'],
-  providers: [ApiService,MessageService],
+  providers: [ApiService, MessageService],
   standalone: true,
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
     CommonModule,
     HttpClientModule,
     ToastModule,
-    ImportsModule
+    ImportsModule,
+    IftaLabelModule,
+    FormsModule,
   ],
 })
 export class DeliveriesComponent implements OnInit {
-  @ViewChild('myGrid') myGrid!: AgGridAngular;
-  @ViewChild('dt1') dt1: Table | undefined;
-  deliveries!: Deliveries[];
-  public rowData: any[] | null = null;
-  public rowDataTecnicos: any[] | null = null;
-  public rowSelection: 'single' | 'multiple' = 'multiple';
-  public paginationPageSize = 10;
-  public paginationPageSizeSelector: number[] = [10, 25, 50, 100, 200];
-  firstFormGroup!: FormGroup;
-  secondFormGroup!: FormGroup;
-  thirdFormGroup!: FormGroup;
-  isLinear = true;
-  loading: boolean = true;
+  @ViewChild('dt4') dt4: Table | undefined;
 
+  deliveries!: Deliveries[];
+  public rowDataTecnicos: any[] | null = null;
+  loading: boolean = true;
   public materials: { name: string; value: string }[] = [];
   public tecnicos: { name: string; value: string }[] = [];
-
-  // Control to show/hide the stepper
   public showStepper: boolean = false;
+  isAccordionHidden: boolean = true;
+  orders!: Order[];
+  visible: boolean = false;
+  SelectedMaterial: any;
+  SelectedCantidad: any;
+  SelectedObservacion: any;
+  SelectedFechaSolcitada: any;
+  SelectedPaqueteTrabajo: any;
+  SelectedTecnico: any;
 
-  constructor(
-    private apiService: ApiService,
-    private activeSheetService: ActiveSheetService,
-    private _formBuilder: FormBuilder
-  ) {}
+  constructor(private apiService: ApiService) {}
 
   ngOnInit() {
     this.getDeliveries();
     this.getTecnicos();
-
-    this.firstFormGroup = this._formBuilder.group({
-      material: ['', Validators.required],
-      cantidad: [null, [Validators.required, Validators.min(1)]],
-      observacion: [''],
-    });
-    this.secondFormGroup = this._formBuilder.group({
-      fechaSolicitada: ['', Validators.required],
-      paqueteTrabajo: ['', Validators.required],
-    });
-    this.thirdFormGroup = this._formBuilder.group({
-      tecnico: ['', Validators.required],
-    });
+    this.getOrders();
   }
 
   getDeliveries() {
     this.apiService.getDeliveries().subscribe(
       (response: Deliveries[]) => {
-        this.rowData = response;
-        this.deliveries = response;
-        console.log("DELIVERIES", this.deliveries);
+        this.deliveries = response.map((item) => new Deliveries(item));
         this.loading = false;
       },
       (error) => {
         console.error('Error al obtener las órdenes:', error);
       }
     );
+  }
+
+  getOrders() {
+    this.apiService.getOrders().subscribe(
+      (response: Order[]) => {
+        this.orders = response.map((item) => new Order(item));
+        this.loading = false;
+      },
+      (error) => {
+        console.error('Error al obtener las ordenes:', error);
+      }
+    );
+  }
+
+  showDialog() {
+    this.visible = true;
   }
 
   getTecnicos() {
@@ -109,14 +100,29 @@ export class DeliveriesComponent implements OnInit {
     );
   }
 
+  selectOrder(order: Order) {
+    this.showDialog();
+    console.log('SELECTED ORDER', order);
+    this.SelectedMaterial = order.MaterialSolicitado;
+    this.SelectedCantidad = order.Cantidad;
+    this.SelectedObservacion = order.Observacion;
+    this.SelectedFechaSolcitada = order.Fechasolicitada;
+    this.SelectedPaqueteTrabajo = order.PaquetedeTrabajo;
+    this.SelectedTecnico = order.TecnicoResponsable;
+    //this.messageService.add({ severity: 'info', summary: 'Product Selected', detail: product.name });
+  }
+
   applyFilterGlobal($event: any, stringVal: any) {
-    this.dt1!.filterGlobal(
+    this.dt4!.filterGlobal(
       ($event.target as HTMLInputElement).value,
       stringVal
     );
   }
   applyColumnFilter(event: Event, field: string) {
     const value = (event.target as HTMLInputElement).value;
-    this.dt1!.filter(value, field, 'contains');
+    this.dt4!.filter(value, field, 'contains');
+  }
+  toggleAccordion(): void {
+    this.isAccordionHidden = !this.isAccordionHidden;
   }
 }

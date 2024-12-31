@@ -10,6 +10,7 @@
   font-weight: bold;
   color: #333;
 }
+
 .btn {
   display: inline-block;
   text-decoration: none;
@@ -19,8 +20,8 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
-  background-color: #000000; 
-  color: #ffffff; 
+  background-color: #000000;
+  color: #ffffff;
 }
 
 .card {
@@ -33,4 +34,20 @@
 
 .card-body {
   padding: 1rem;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap; /* Permite que los campos se ajusten */
+  gap: 1rem;
+  align-items: center;
+}
+
+.field p-iftalabel {
+  display: flex;
+  flex-direction: column;
+}
+
+.field input {
+  flex: 1; /* Hace que los inputs se ajusten al contenido */
 }
